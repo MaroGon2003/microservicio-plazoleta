@@ -1,7 +1,7 @@
 package com.example.microservicio_plazoleta.domain.useCase;
 
 import com.example.microservicio_plazoleta.domain.api.IRestaurantServicePort;
-import com.example.microservicio_plazoleta.domain.exception.ErrorMessages;
+import com.example.microservicio_plazoleta.domain.utils.ErrorMessages;
 import com.example.microservicio_plazoleta.domain.exception.RestaurantAlreadyExistsException;
 import com.example.microservicio_plazoleta.domain.model.RestaurantModel;
 import com.example.microservicio_plazoleta.domain.spi.IRestaurantPersistencePort;
@@ -27,6 +27,8 @@ public class RestaurantUseCase implements IRestaurantServicePort {
         }
 
         //Faltan validaciones
+        //#1 revisar id_owner
+
 
         restaurantPersistencePort.saveRestaurant(restaurant);
 
