@@ -8,4 +8,6 @@ public interface IRestaurantPersistencePort {
 
     boolean existsRestaurantByNit(String nit);
 
+    RestaurantModel getRestaurantById(Long id);
+
 }

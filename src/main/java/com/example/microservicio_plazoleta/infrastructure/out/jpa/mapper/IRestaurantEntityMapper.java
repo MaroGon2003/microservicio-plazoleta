@@ -14,4 +14,5 @@ public interface IRestaurantEntityMapper {
 
     RestaurantModel toRestaurantModel(RestaurantEntity restaurantEntity);
 
+    RestaurantModel toModel(RestaurantEntity restaurantEntity);
 }

@@ -4,8 +4,10 @@ import com.example.microservicio_plazoleta.domain.model.RestaurantModel;
 import com.example.microservicio_plazoleta.domain.spi.IRestaurantPersistencePort;
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.mapper.IRestaurantEntityMapper;
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.repository.IRestaurantRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+@Transactional
 @RequiredArgsConstructor
 public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
 
@@ -19,6 +21,11 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
 
     @Override
     public boolean existsRestaurantByNit(String nit) {
-        return false;
+        return restaurantRepository.existsByNit(nit);
+    }
+
+    @Override
+    public RestaurantModel getRestaurantById(Long id) {
+        return restaurantEntityMapper.toModel(restaurantRepository.findById(id).orElse(null));
     }
 }

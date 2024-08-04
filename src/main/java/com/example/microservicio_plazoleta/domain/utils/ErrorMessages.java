@@ -4,6 +4,10 @@ public class ErrorMessages {
 
         public static final String RESTAURANT_ALREADY_EXISTS = "Restaurant already exists";
         public static final String RESTAURANT_IS_NULL = "Restaurant is null";
+        public static final String RESTAURANT_NOT_FOUND = "Restaurant not found";
+        public static final String CATEGORY_NOT_FOUND = "Category not found";
+
+        public static final String DISH_IS_NULL = "Dish is null";
 
         // Constructor privado para prevenir la instanciación
         private ErrorMessages() {
