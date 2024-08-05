@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,6 +39,18 @@ class RestaurantUseCaseTest {
         when(restaurantPersistencePort.existsRestaurantByNit(any(String.class))).thenReturn(true);
 
         assertThrows(RestaurantAlreadyExistsException.class, () -> restaurantUseCase.saveRestaurant(restaurantModel));
+
+    }
+
+    @Test
+    void shouldSaveRestaurant(){
+
+        RestaurantModel restaurantModel = RestaurantTestDataFactory.getRestaurantWithSetters();
+
+        when(restaurantPersistencePort.existsRestaurantByNit(any(String.class))).thenReturn(false);
+        restaurantUseCase.saveRestaurant(restaurantModel);
+
+        verify(restaurantPersistencePort).saveRestaurant(restaurantModel);
 
     }
 
