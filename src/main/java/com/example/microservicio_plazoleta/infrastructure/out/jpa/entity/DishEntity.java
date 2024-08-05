@@ -20,7 +20,7 @@ public class DishEntity {
 
     private String name;
     private String description;
-    private Double price;
+    private int price;
     private String imageUrl;
     private boolean active = true;
 

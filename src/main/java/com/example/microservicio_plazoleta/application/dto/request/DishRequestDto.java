@@ -22,7 +22,7 @@ public class DishRequestDto {
     private int price;
 
     @NotBlank(message = "The image url must not be empty")
-    private String imagenUrl;
+    private String imageUrl;
 
     @NotNull
     private boolean active = true;

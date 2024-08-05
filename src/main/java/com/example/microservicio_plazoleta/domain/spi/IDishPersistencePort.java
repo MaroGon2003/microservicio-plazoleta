@@ -12,4 +12,7 @@ public interface IDishPersistencePort {
 
     CategoryModel getCategoryById(Long id);
 
+    DishModel getDishById(Long id);
+
+    DishModel updateDish(Long id, DishModel dish);
 }

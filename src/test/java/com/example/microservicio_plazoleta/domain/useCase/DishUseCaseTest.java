@@ -1,6 +1,7 @@
 package com.example.microservicio_plazoleta.domain.useCase;
 
 import com.example.microservicio_plazoleta.domain.exception.CategoryNotFoundException;
+import com.example.microservicio_plazoleta.domain.exception.DishNotFoundException;
 import com.example.microservicio_plazoleta.domain.exception.RestaurantNotFoundException;
 import com.example.microservicio_plazoleta.domain.model.DishModel;
 import com.example.microservicio_plazoleta.domain.spi.IDishPersistencePort;
@@ -60,6 +61,42 @@ class DishUseCaseTest {
 
         assertThrows(CategoryNotFoundException.class, () -> dishUseCase.saveDish(dishModel));
 
+    }
+
+    @Test
+    void shouldGetDishById() {
+        DishModel expect = DishTestDataFactory.getDishWithSetters();
+        when(dishPersistencePort.getDishById(anyLong())).thenReturn(expect);
+        dishUseCase.getDishById(1L);
+        verify(dishPersistencePort).getDishById(anyLong());
+    }
+
+    @Test
+    void shouldThrowDishNotFoundException() {
+        assertThrows(DishNotFoundException.class, () -> dishUseCase.getDishById(100L));
+    }
+
+    @Test
+    void shouldUpdateDish() {
+        DishModel expect = DishTestDataFactory.getDishWithSetters();
+        when(dishPersistencePort.getDishById(anyLong())).thenReturn(expect);
+        when(dishPersistencePort.updateDish(anyLong(), any(DishModel.class))).thenReturn(expect);
+        dishUseCase.updateDish(1L, expect);
+        verify(dishPersistencePort).updateDish(1L, expect);
+    }
+
+    @Test
+    void shouldThrowDishNotFoundExceptionUpdate() {
+        DishModel expect = DishTestDataFactory.getDishWithSetters();
+        when(dishPersistencePort.getDishById(anyLong())).thenReturn(null);
+        assertThrows(DishNotFoundException.class, () -> dishUseCase.updateDish(1L, expect));
+    }
+
+    @Test
+    void shouldTrowNotFoundExceptionInUpdateDish() {
+        DishModel nullDish = new DishModel();
+
+        assertThrows(DishNotFoundException.class, () -> dishUseCase.updateDish(1L, nullDish));
     }
 
 }
