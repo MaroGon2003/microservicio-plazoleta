@@ -2,10 +2,13 @@ package com.example.microservicio_plazoleta.infrastructure.configuration;
 
 import com.example.microservicio_plazoleta.domain.api.IDishServicePort;
 import com.example.microservicio_plazoleta.domain.api.IRestaurantServicePort;
+import com.example.microservicio_plazoleta.domain.api.IUserFeignServicePort;
 import com.example.microservicio_plazoleta.domain.spi.IDishPersistencePort;
 import com.example.microservicio_plazoleta.domain.spi.IRestaurantPersistencePort;
 import com.example.microservicio_plazoleta.domain.useCase.DishUseCase;
 import com.example.microservicio_plazoleta.domain.useCase.RestaurantUseCase;
+import com.example.microservicio_plazoleta.infrastructure.input.feign.IUserFeignClient;
+import com.example.microservicio_plazoleta.infrastructure.input.feign.impl.UserFeignClient;
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.adapter.DishJpaAdapter;
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.adapter.RestaurantJpaAdapter;
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.mapper.ICategoryEntityMapper;
@@ -28,6 +31,7 @@ public class BeanConfiguration {
     private final IDishEntityMapper dishEntityMapper;
     private final ICategoryRepository categoryRepository;
     private final ICategoryEntityMapper categoryEntityMapper;
+    private final IUserFeignClient userFeignClient;
 
 
     @Bean
@@ -37,7 +41,7 @@ public class BeanConfiguration {
 
     @Bean
     public IRestaurantServicePort restaurantServicePort(){
-        return new RestaurantUseCase(restaurantPersistencePort());
+        return new RestaurantUseCase(restaurantPersistencePort(), userFeignServicePort());
     }
 
     @Bean
@@ -47,7 +51,12 @@ public class BeanConfiguration {
 
     @Bean
     public IDishServicePort dishServicePort(){
-        return new DishUseCase(dishPersistencePort());
+        return new DishUseCase(dishPersistencePort(), userFeignServicePort());
+    }
+
+    @Bean
+    public IUserFeignServicePort userFeignServicePort(){
+        return new UserFeignClient(userFeignClient);
     }
 
 }

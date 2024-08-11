@@ -1,6 +1,8 @@
 package com.example.microservicio_plazoleta.domain.useCase;
 
+import com.example.microservicio_plazoleta.domain.api.IUserFeignServicePort;
 import com.example.microservicio_plazoleta.domain.exception.RestaurantAlreadyExistsException;
+import com.example.microservicio_plazoleta.domain.exception.UserNotOwnerException;
 import com.example.microservicio_plazoleta.domain.model.RestaurantModel;
 import com.example.microservicio_plazoleta.domain.spi.IRestaurantPersistencePort;
 import com.example.microservicio_plazoleta.domain.useCase.factory.RestaurantTestDataFactory;
@@ -20,6 +22,9 @@ class RestaurantUseCaseTest {
 
     @Mock
     private IRestaurantPersistencePort restaurantPersistencePort;
+
+    @Mock
+    private IUserFeignServicePort userFeignServicePort;
 
     @InjectMocks
     private RestaurantUseCase restaurantUseCase;
@@ -43,11 +48,24 @@ class RestaurantUseCaseTest {
     }
 
     @Test
+    void shouldThrowUserNotOwner(){
+
+        RestaurantModel restaurantModel = RestaurantTestDataFactory.getRestaurantWithSetters();
+
+        when(restaurantPersistencePort.existsRestaurantByNit(any(String.class))).thenReturn(false);
+        when(userFeignServicePort.validateOwner(any(Long.class))).thenReturn(false);
+
+        assertThrows(UserNotOwnerException.class, () -> restaurantUseCase.saveRestaurant(restaurantModel));
+
+    }
+
+    @Test
     void shouldSaveRestaurant(){
 
         RestaurantModel restaurantModel = RestaurantTestDataFactory.getRestaurantWithSetters();
 
         when(restaurantPersistencePort.existsRestaurantByNit(any(String.class))).thenReturn(false);
+        when(userFeignServicePort.validateOwner(any(Long.class))).thenReturn(true);
         restaurantUseCase.saveRestaurant(restaurantModel);
 
         verify(restaurantPersistencePort).saveRestaurant(restaurantModel);

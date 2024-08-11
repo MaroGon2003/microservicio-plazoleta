@@ -27,8 +27,8 @@ public class RestaurantRestController {
             @ApiResponse(responseCode = "409", description = "restaurant already exists", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(mediaType = "application/json"))
     })
-    @PostMapping("/")
-    public ResponseEntity<Void> saveRestaurant(@RequestBody @Valid RestaurantRequestDto restaurantRequestDto) {
+    @PostMapping("/create-restaurant")
+    public ResponseEntity<Void> createRestaurant(@RequestBody @Valid RestaurantRequestDto restaurantRequestDto) {
         restaurantHandler.saveRestaurant(restaurantRequestDto);
         return ResponseEntity.ok().build();
     }

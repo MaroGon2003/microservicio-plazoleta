@@ -1,6 +1,7 @@
 package com.example.microservicio_plazoleta.application.handler.impl;
 
 import com.example.microservicio_plazoleta.application.dto.request.DishRequestDto;
+import com.example.microservicio_plazoleta.application.dto.request.DishUpdateActiveRequestDto;
 import com.example.microservicio_plazoleta.application.dto.request.DishUpdateDto;
 import com.example.microservicio_plazoleta.application.dto.response.DishResponseDto;
 import com.example.microservicio_plazoleta.application.handler.IDishHandler;
@@ -24,9 +25,14 @@ public class DishHandler implements IDishHandler {
     }
 
     @Override
-    public DishResponseDto updateDish(Long id, DishUpdateDto dishUpdateDto) {
-        return dishResponseMapper.toDishResponseDto(dishServicePort.updateDish(id, dishRequestMapper.toDishModelUpdate(dishUpdateDto)));
+    public DishResponseDto updateDish(Long id, Long ownerId, DishUpdateDto dishUpdateDto) {
+        return dishResponseMapper.toDishResponseDto(dishServicePort.updateDish(id, ownerId, dishRequestMapper.toDishModelUpdate(dishUpdateDto)));
     }
 
+    @Override
+    public void updateActiveDish(Long id,Long ownerId ,DishUpdateActiveRequestDto dishUpdateActiveRequestDto) {
+        dishServicePort.updateActiveDish(id, ownerId, dishRequestMapper.toDishModelActive(dishUpdateActiveRequestDto));
+
+    }
 
 }

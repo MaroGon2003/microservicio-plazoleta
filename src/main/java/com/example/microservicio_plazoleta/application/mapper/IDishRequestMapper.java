@@ -1,6 +1,7 @@
 package com.example.microservicio_plazoleta.application.mapper;
 
 import com.example.microservicio_plazoleta.application.dto.request.DishRequestDto;
+import com.example.microservicio_plazoleta.application.dto.request.DishUpdateActiveRequestDto;
 import com.example.microservicio_plazoleta.application.dto.request.DishUpdateDto;
 import com.example.microservicio_plazoleta.domain.model.DishModel;
 import org.mapstruct.Mapper;
@@ -18,5 +19,7 @@ public interface IDishRequestMapper {
     DishModel toDishModel(DishRequestDto dishRequestDto);
 
     DishModel toDishModelUpdate(DishUpdateDto dishUpdateDto);
+
+    DishModel toDishModelActive(DishUpdateActiveRequestDto dishUpdateActiveRequestDto);
 
 }

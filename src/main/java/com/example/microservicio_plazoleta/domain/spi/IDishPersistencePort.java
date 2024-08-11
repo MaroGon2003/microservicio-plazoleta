@@ -15,4 +15,6 @@ public interface IDishPersistencePort {
     DishModel getDishById(Long id);
 
     DishModel updateDish(Long id, DishModel dish);
+
+    void updateActiveDish(Long id, DishModel dish);
 }
