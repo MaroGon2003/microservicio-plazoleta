@@ -9,6 +9,8 @@ import com.example.microservicio_plazoleta.domain.model.RestaurantModel;
 import com.example.microservicio_plazoleta.domain.spi.IDishPersistencePort;
 import com.example.microservicio_plazoleta.domain.utils.ErrorMessages;
 
+import java.util.List;
+
 public class DishUseCase implements IDishServicePort {
 
     private final IDishPersistencePort dishPersistencePort;
@@ -105,5 +107,18 @@ public class DishUseCase implements IDishServicePort {
 
         dishModel.setActive(dish.isActive());
         dishPersistencePort.updateActiveDish(id, dishModel);
+    }
+
+    @Override
+    public List<DishModel> getAllDishes(Long restaurantId, int pageNumber, int pageSize, Long categoryId) {
+
+        List<DishModel> dishesList = dishPersistencePort.getAllDishes(restaurantId, pageNumber, pageSize, categoryId);
+
+        if (dishesList.isEmpty()) {
+            throw new NullPointerException(ErrorMessages.DISH_LIST_IS_EMPTY);
+        }
+
+        return dishesList;
+
     }
 }

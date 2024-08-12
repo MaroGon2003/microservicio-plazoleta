@@ -3,8 +3,10 @@ package com.example.microservicio_plazoleta.infrastructure.input.rest;
 import com.example.microservicio_plazoleta.application.dto.request.DishRequestDto;
 import com.example.microservicio_plazoleta.application.dto.request.DishUpdateActiveRequestDto;
 import com.example.microservicio_plazoleta.application.dto.request.DishUpdateDto;
+import com.example.microservicio_plazoleta.application.dto.response.DishResponseDto;
 import com.example.microservicio_plazoleta.application.handler.IDishHandler;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -12,6 +14,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/dish")
@@ -51,6 +55,16 @@ public class DishRestController {
     public ResponseEntity<Void> updateActiveDish(@PathVariable Long id,Long ownerId, @RequestBody @Valid DishUpdateActiveRequestDto requestDto) {
         dishHandler.updateActiveDish(id,ownerId,requestDto);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Get all dishes")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "dishes retrieved", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Invalid input", content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("/all-dishes/{id}")
+    public ResponseEntity<List<DishResponseDto>> getAllDishes(@Parameter(description = "Id of the restaurant to which you want to consult the dishes") @PathVariable Long id , @RequestParam int pageNumber, @RequestParam int pageSize, @RequestParam Long categoryId) {
+        return ResponseEntity.ok(dishHandler.getAllDishes(id , pageNumber, pageSize, categoryId));
     }
 
 }

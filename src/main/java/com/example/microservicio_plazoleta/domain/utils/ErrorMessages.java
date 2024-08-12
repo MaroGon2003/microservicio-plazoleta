@@ -8,10 +8,10 @@ public class ErrorMessages {
     public static final String CATEGORY_NOT_FOUND = "Category not found";
     public static final String DISH_IS_NULL = "Dish is null";
     public static final String RESTAURANT_LIST_IS_EMPTY = "Restaurant list is empty";
-
     public static final String DISH_NOT_FOUND = "Dish not found";
     public static final String USER_NOT_OWNER = "User is not owner";
     public static final String OWNER_DISH_UPDATE = "Owner can only update their dishes";
+    public static final String DISH_LIST_IS_EMPTY = "Dish list is empty";
 
     // Constructor privado para prevenir la instanciación
     private ErrorMessages() {

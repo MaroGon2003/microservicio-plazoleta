@@ -4,6 +4,8 @@ import com.example.microservicio_plazoleta.domain.model.CategoryModel;
 import com.example.microservicio_plazoleta.domain.model.DishModel;
 import com.example.microservicio_plazoleta.domain.model.RestaurantModel;
 
+import java.util.List;
+
 public interface IDishPersistencePort {
 
     void saveDish(DishModel dish);
@@ -17,4 +19,6 @@ public interface IDishPersistencePort {
     DishModel updateDish(Long id, DishModel dish);
 
     void updateActiveDish(Long id, DishModel dish);
+
+    List<DishModel> getAllDishes(Long restaurantId, int pageNumber, int pageSize, Long categoryId);
 }

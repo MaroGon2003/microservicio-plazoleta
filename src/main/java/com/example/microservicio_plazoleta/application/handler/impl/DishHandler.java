@@ -11,6 +11,8 @@ import com.example.microservicio_plazoleta.domain.api.IDishServicePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class DishHandler implements IDishHandler {
@@ -33,6 +35,11 @@ public class DishHandler implements IDishHandler {
     public void updateActiveDish(Long id,Long ownerId ,DishUpdateActiveRequestDto dishUpdateActiveRequestDto) {
         dishServicePort.updateActiveDish(id, ownerId, dishRequestMapper.toDishModelActive(dishUpdateActiveRequestDto));
 
+    }
+
+    @Override
+    public List<DishResponseDto> getAllDishes(Long restaurantId, int pageNumber, int pageSize, Long categoryId) {
+        return dishResponseMapper.toDishResponseDto(dishServicePort.getAllDishes(restaurantId, pageNumber, pageSize, categoryId));
     }
 
 }

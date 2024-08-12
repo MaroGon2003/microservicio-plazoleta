@@ -3,6 +3,8 @@ package com.example.microservicio_plazoleta.domain.useCase.factory;
 import com.example.microservicio_plazoleta.domain.model.CategoryModel;
 import com.example.microservicio_plazoleta.domain.model.DishModel;
 
+import java.util.List;
+
 public class DishTestDataFactory {
 
     public static DishModel getDishWithSetters() {
@@ -25,6 +27,10 @@ public class DishTestDataFactory {
         categoryModel.setDescription("Comida rapida");
 
         return categoryModel;
+    }
+
+    public static List<DishModel> getDishesList() {
+        return List.of(getDishWithSetters());
     }
 
 }

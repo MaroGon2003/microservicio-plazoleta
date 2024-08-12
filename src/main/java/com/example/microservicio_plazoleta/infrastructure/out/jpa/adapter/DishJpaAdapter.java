@@ -13,6 +13,11 @@ import com.example.microservicio_plazoleta.infrastructure.out.jpa.repository.IDi
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.repository.IRestaurantRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 @Transactional
 @RequiredArgsConstructor
@@ -59,6 +64,14 @@ public class DishJpaAdapter implements IDishPersistencePort {
         dishEntity.setActive(dish.isActive());
         dishRepository.save(dishEntity);
     }
+
+    @Override
+    public List<DishModel> getAllDishes(Long restaurantId, int pageNumber, int pageSize, Long categoryId) {
+        Pageable dishPageable = PageRequest.of(pageNumber, pageSize);
+        Page<DishEntity> dishEntityPage = dishRepository.findByIdRestaurantIdAndIdCategoryId(restaurantId, categoryId, dishPageable);
+        return dishEntityMapper.toDishModelList(dishEntityPage.getContent());
+    }
+
 
     private DishEntity getDishToUpdate(Long id) {
 

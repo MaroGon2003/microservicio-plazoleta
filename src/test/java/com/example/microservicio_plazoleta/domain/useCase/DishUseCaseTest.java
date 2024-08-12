@@ -13,6 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
@@ -126,6 +129,28 @@ class DishUseCaseTest {
         when(dishPersistencePort.getRestaurantById(anyLong())).thenReturn(restaurantModel);
 
         assertThrows(OwnerDishUpdateException.class, () -> dishUseCase.updateDish(1L, 1L, dishModel));
+    }
+
+    @Test
+    void shouldGetAllDishes() {
+
+        List<DishModel> dishesList = DishTestDataFactory.getDishesList();
+
+        when(dishPersistencePort.getAllDishes(1L, 0, 2, 1L)).thenReturn(dishesList);
+        List<DishModel> result = dishUseCase.getAllDishes(1L, 0, 2, 1L);
+
+        assertEquals(dishesList, result);
+
+        verify(dishPersistencePort).getAllDishes(1L, 0, 2, 1L);
+
+    }
+
+    @Test
+    void shouldThrowDishListIsEmpty() {
+
+        when(dishPersistencePort.getAllDishes(1L, 0, 2, 1L)).thenReturn(List.of());
+        assertThrows(NullPointerException.class, () -> dishUseCase.getAllDishes(1L, 0, 2, 1L));
+
     }
 
 }
