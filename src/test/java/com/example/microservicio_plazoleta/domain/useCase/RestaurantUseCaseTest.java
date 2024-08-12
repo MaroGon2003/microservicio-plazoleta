@@ -12,6 +12,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -69,6 +72,29 @@ class RestaurantUseCaseTest {
         restaurantUseCase.saveRestaurant(restaurantModel);
 
         verify(restaurantPersistencePort).saveRestaurant(restaurantModel);
+
+    }
+
+    @Test
+    void shouldGetAllRestaurants() {
+
+        List<RestaurantModel> restaurantsList = RestaurantTestDataFactory.getRestaurantsList();
+
+        when(restaurantPersistencePort.getAllRestaurants(0, 2)).thenReturn(restaurantsList);
+        List<RestaurantModel> result = restaurantUseCase.getAllRestaurants(0, 2);
+
+        assertEquals(restaurantsList, result);
+
+        verify(restaurantPersistencePort).getAllRestaurants(0, 2);
+
+    }
+
+    @Test
+    void shouldThrowRestaurantListIsEmpty() {
+
+        when(restaurantPersistencePort.getAllRestaurants(0, 2)).thenReturn(List.of());
+
+        assertThrows(NullPointerException.class, () -> restaurantUseCase.getAllRestaurants(0, 2));
 
     }
 

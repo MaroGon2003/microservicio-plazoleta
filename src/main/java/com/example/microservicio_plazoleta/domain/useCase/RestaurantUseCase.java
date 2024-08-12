@@ -8,6 +8,8 @@ import com.example.microservicio_plazoleta.domain.exception.RestaurantAlreadyExi
 import com.example.microservicio_plazoleta.domain.model.RestaurantModel;
 import com.example.microservicio_plazoleta.domain.spi.IRestaurantPersistencePort;
 
+import java.util.List;
+
 public class RestaurantUseCase implements IRestaurantServicePort {
 
     private final IRestaurantPersistencePort restaurantPersistencePort;
@@ -36,5 +38,14 @@ public class RestaurantUseCase implements IRestaurantServicePort {
 
         restaurantPersistencePort.saveRestaurant(restaurant);
 
+    }
+
+    @Override
+    public List<RestaurantModel> getAllRestaurants(int pageNumber, int pageSize) {
+        List<RestaurantModel> restaurantsList = restaurantPersistencePort.getAllRestaurants(pageNumber, pageSize);
+        if (restaurantsList.isEmpty()) {
+            throw new NullPointerException(ErrorMessages.RESTAURANT_LIST_IS_EMPTY);
+        }
+        return restaurantsList;
     }
 }

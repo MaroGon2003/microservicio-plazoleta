@@ -1,6 +1,7 @@
 package com.example.microservicio_plazoleta.infrastructure.input.rest;
 
 import com.example.microservicio_plazoleta.application.dto.request.RestaurantRequestDto;
+import com.example.microservicio_plazoleta.application.dto.response.RestaurantResponseDto;
 import com.example.microservicio_plazoleta.application.handler.IRestaurantHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -9,10 +10,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/restaurant")
@@ -31,6 +31,11 @@ public class RestaurantRestController {
     public ResponseEntity<Void> createRestaurant(@RequestBody @Valid RestaurantRequestDto restaurantRequestDto) {
         restaurantHandler.saveRestaurant(restaurantRequestDto);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/all-restaurants")
+    public ResponseEntity<List<RestaurantResponseDto>> getAllRestaurants(@RequestParam int pageNumber, @RequestParam int pageSize) {
+        return ResponseEntity.ok(restaurantHandler.getAllRestaurants(pageNumber, pageSize));
     }
 
 }

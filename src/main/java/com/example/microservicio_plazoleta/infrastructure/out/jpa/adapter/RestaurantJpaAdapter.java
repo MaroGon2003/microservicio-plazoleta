@@ -6,6 +6,10 @@ import com.example.microservicio_plazoleta.infrastructure.out.jpa.mapper.IRestau
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.repository.IRestaurantRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 @Transactional
 @RequiredArgsConstructor
@@ -22,6 +26,12 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     @Override
     public boolean existsRestaurantByNit(String nit) {
         return restaurantRepository.existsByNit(nit);
+    }
+
+    @Override
+    public List<RestaurantModel> getAllRestaurants(int pageNumber, int pageSize) {
+        Pageable restaurantPageable = PageRequest.of(pageNumber, pageSize);
+        return restaurantEntityMapper.toRestaurantModelList(restaurantRepository.findAllByOrderByName(restaurantPageable).getContent());
     }
 
     @Override

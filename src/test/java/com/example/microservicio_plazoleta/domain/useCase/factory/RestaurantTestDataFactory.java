@@ -2,6 +2,8 @@ package com.example.microservicio_plazoleta.domain.useCase.factory;
 
 import com.example.microservicio_plazoleta.domain.model.RestaurantModel;
 
+import java.util.List;
+
 public class RestaurantTestDataFactory {
 
     public static RestaurantModel getRestaurantWithSetters() {
@@ -15,6 +17,10 @@ public class RestaurantTestDataFactory {
         restaurantModel.setNit("1234567890");
 
         return restaurantModel;
+    }
+
+    public static List<RestaurantModel> getRestaurantsList() {
+        return List.of(getRestaurantWithSetters());
     }
 
 }
