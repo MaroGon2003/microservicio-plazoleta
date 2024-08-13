@@ -7,9 +7,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,10 +19,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/restaurant")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "jwt")
 public class RestaurantRestController {
 
     private final IRestaurantHandler restaurantHandler;
 
+
+    @Secured("ADMIN")
     @Operation(summary = "Add a new restaurant", description = "Creates a new restaurant in the system if the restaurant does not already exist.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "restaurant created", content = @Content(mediaType = "application/json")),
@@ -33,6 +38,7 @@ public class RestaurantRestController {
         return ResponseEntity.ok().build();
     }
 
+    @Secured({"CUSTOMER"})
     @GetMapping("/all-restaurants")
     public ResponseEntity<List<RestaurantResponseDto>> getAllRestaurants(@RequestParam int pageNumber, @RequestParam int pageSize) {
         return ResponseEntity.ok(restaurantHandler.getAllRestaurants(pageNumber, pageSize));

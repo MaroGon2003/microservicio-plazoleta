@@ -10,9 +10,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,10 +22,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/dish")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "jwt")
 public class DishRestController {
 
     private final IDishHandler dishHandler;
 
+    @Secured("OWNER")
     @Operation(summary = "Add a new dish")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "restaurant created", content = @Content(mediaType = "application/json")),
@@ -35,6 +39,7 @@ public class DishRestController {
         return ResponseEntity.ok().build();
     }
 
+    @Secured({"OWNER"})
     @Operation(summary = "Update a dish")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "dish updated", content = @Content(mediaType = "application/json")),
@@ -46,6 +51,7 @@ public class DishRestController {
         return ResponseEntity.ok().build();
     }
 
+    @Secured({"OWNER"})
     @Operation(summary = "Update the active status of a dish")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "dish updated", content = @Content(mediaType = "application/json")),
@@ -57,6 +63,7 @@ public class DishRestController {
         return ResponseEntity.ok().build();
     }
 
+    @Secured({"CUSTOMER"})
     @Operation(summary = "Get all dishes")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "dishes retrieved", content = @Content(mediaType = "application/json")),
