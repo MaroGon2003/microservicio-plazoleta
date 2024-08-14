@@ -27,14 +27,10 @@ public class JwtToken {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            //Extract the email from the token
             String email = claims.getSubject();
-            //Extract the role from the token
             String role = (String) claims.get(ROLE);
-            //Create an Authorities with the role
             Collection<? extends GrantedAuthority> authorities =
                     Collections.singletonList(new SimpleGrantedAuthority(role));
-            //Return a new User authentication with user credentials
             return new UsernamePasswordAuthenticationToken(
                     email,
                     null,

@@ -2,6 +2,7 @@ package com.example.microservicio_plazoleta.infrastructure.out.jpa.adapter;
 
 import com.example.microservicio_plazoleta.domain.model.OrderModel;
 import com.example.microservicio_plazoleta.domain.spi.IOrderPersistencePort;
+import com.example.microservicio_plazoleta.infrastructure.out.jpa.entity.OrderEntity;
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.mapper.IOrderEntityMapper;
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.repository.IOrderRepository;
 import com.example.microservicio_plazoleta.infrastructure.utils.JwtAuthorizationExtractor;
@@ -18,8 +19,11 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     private final IOrderEntityMapper orderEntityMapper;
 
     @Override
-    public void saveOrder(OrderModel orderModel) {
-        orderRepository.save(orderEntityMapper.toOrderEntity(orderModel));
+    public Long saveOrder(OrderModel orderModel) {
+
+        OrderEntity orderEntity =  orderRepository.save(orderEntityMapper.toOrderEntity(orderModel));
+        return orderEntity.getId();
+
     }
 
     @Override

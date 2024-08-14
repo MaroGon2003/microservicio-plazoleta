@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IOrderPersistencePort {
 
-    void saveOrder(OrderModel orderModel);
+    Long saveOrder(OrderModel orderModel);
 
     Long getAuthenticatedUserId();
 

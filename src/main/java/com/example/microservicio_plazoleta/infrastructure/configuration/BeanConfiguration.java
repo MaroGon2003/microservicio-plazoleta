@@ -5,7 +5,6 @@ import com.example.microservicio_plazoleta.domain.spi.IDishPersistencePort;
 import com.example.microservicio_plazoleta.domain.spi.IDishToOrderPersistencePort;
 import com.example.microservicio_plazoleta.domain.spi.IOrderPersistencePort;
 import com.example.microservicio_plazoleta.domain.spi.IRestaurantPersistencePort;
-import com.example.microservicio_plazoleta.domain.useCase.DishToOrderUseCase;
 import com.example.microservicio_plazoleta.domain.useCase.DishUseCase;
 import com.example.microservicio_plazoleta.domain.useCase.OrderUseCase;
 import com.example.microservicio_plazoleta.domain.useCase.RestaurantUseCase;
@@ -70,17 +69,12 @@ public class BeanConfiguration {
 
     @Bean
     public IOrderServicePort orderServicePort(){
-        return new OrderUseCase(restaurantPersistencePort(), orderPersistencePort());
+        return new OrderUseCase(restaurantPersistencePort(), orderPersistencePort(), dishToOrderPersistencePort(), dishPersistencePort());
     }
 
     @Bean
     public IDishToOrderPersistencePort dishToOrderPersistencePort(){
         return new DishToOrderJpaAdapter(dishToOrderRepository, dishToOrderEntityMapper, orderRepository);
-    }
-
-    @Bean
-    public IDishToOrderServicePort dishToOrderServicePort(){
-        return new DishToOrderUseCase(dishToOrderPersistencePort() , dishPersistencePort() , restaurantPersistencePort());
     }
 
 }

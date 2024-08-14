@@ -6,13 +6,16 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface IDishToOrderRequestMapper {
 
-    @Mapping(target = "orderModelId", source = "idOrder")
     @Mapping(target = "dishModelId", source = "idDish")
     DishToOrderModel toDishToOrderModel(DishToOrderRequestDto dishToOrderRequestDto);
+
+    List<DishToOrderModel> toDishToOrderModelList(List<DishToOrderRequestDto> dishToOrderRequestDtoList);
 
 }

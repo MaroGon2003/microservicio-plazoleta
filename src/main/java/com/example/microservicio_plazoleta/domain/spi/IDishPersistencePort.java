@@ -21,4 +21,7 @@ public interface IDishPersistencePort {
     void updateActiveDish(Long id, DishModel dish);
 
     List<DishModel> getAllDishes(Long restaurantId, int pageNumber, int pageSize, Long categoryId);
+
+    DishModel getDishByRestaurantIdAndDishId(Long restaurantId, Long dishId);
+
 }

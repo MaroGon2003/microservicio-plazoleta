@@ -16,17 +16,14 @@ public class AuthorizationInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate template) {
-        // Get token from "Authorization" header
         String authorizationHeader = httpServletRequest.getHeader("Authorization");
 
-        // Check if header is present and in correct format (sample, "Bearer <token>")
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring(7); // Remove "Bearer " from the header to get just the token
 
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(null, token)
             );
-            // Add the token to the outgoing request header
             template.header("Authorization", "Bearer " + token);
         }
     }

@@ -1,7 +1,6 @@
 package com.example.microservicio_plazoleta.infrastructure.input.rest;
 
-import com.example.microservicio_plazoleta.application.dto.request.DishToOrderRequestDto;
-import com.example.microservicio_plazoleta.application.handler.IDishToOrderHandler;
+import com.example.microservicio_plazoleta.application.dto.request.OrderRequestDto;
 import com.example.microservicio_plazoleta.application.handler.IOrderHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 public class OrderRestController {
 
     private final IOrderHandler orderHandler;
-    private final IDishToOrderHandler dishToOrderHandler;
 
     @Secured({"CUSTOMER"})
     @Operation(summary = "Create a new order")
@@ -28,21 +26,12 @@ public class OrderRestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "order created")
     })
-    public ResponseEntity<Void> createOrder(@RequestParam Long restaurantId) {
+    public ResponseEntity<Void> createOrder(@Valid @RequestBody OrderRequestDto orderRequestDto) {
 
-        orderHandler.saveOrder(restaurantId);
+        orderHandler.saveOrder(orderRequestDto);
 
         return ResponseEntity.ok().build();
     }
-
-    @Secured({"CUSTOMER"})
-    @Operation(summary = "Add a dish to an order")
-    @PostMapping("/add-dish")
-    public ResponseEntity<Void> addDishToOrder(@Valid @RequestBody DishToOrderRequestDto dishToOrderRequestDto) {
-        dishToOrderHandler.addDishToOrder(dishToOrderRequestDto);
-        return ResponseEntity.ok().build();
-    }
-
 
 
 }

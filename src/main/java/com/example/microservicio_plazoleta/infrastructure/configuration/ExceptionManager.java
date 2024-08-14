@@ -72,4 +72,9 @@ public class ExceptionManager {
         return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
     }
 
+    @ExceptionHandler(DishesRequiredException.class)
+    public ResponseEntity<Map<String,String>> dishesRequiredException(DishesRequiredException e) {
+        return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
+    }
+
 }

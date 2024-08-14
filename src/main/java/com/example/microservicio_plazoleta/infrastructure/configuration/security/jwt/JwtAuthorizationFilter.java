@@ -26,14 +26,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // Send the HttpServletRequest to return the token without Bearer
         String token = getToken(request);
 
         if (token != null && JwtToken.validateToken(token)) {
-            //Get authentication with the credentials in the token
             UsernamePasswordAuthenticationToken authenticationToken =
                     JwtToken.getAuthenticationToken(token);
-            //Set authentication in Spring SecurityContextHolder
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
         filterChain.doFilter(request, response);
@@ -52,11 +49,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     public static String getToken(HttpServletRequest request) {
-        //Get bearer token from Authorization header
         String bearerToken = request.getHeader("Authorization");
-        //Validate that bearerToken is not null and starts with "Bearer"
         if (bearerToken != null && bearerToken.startsWith("Bearer")) {
-            //Remove the word "Bearer" from the bearerToken variable
             return bearerToken.replace("Bearer ", "");
         }
         return null;

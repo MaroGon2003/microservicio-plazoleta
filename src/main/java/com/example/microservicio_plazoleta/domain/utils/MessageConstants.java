@@ -20,6 +20,7 @@ public class MessageConstants {
     public static final String ORDER_NOT_BELONG_CUSTOMER = "Order does not belong to the customer";
     public static final String ORDER_RECEIVES_NO_MORE_DISHES = "Order receives no more dishes";
     public static final String DISH_NOT_BELONG_RESTAURANT = "Dish does not belong to the restaurant";
+    public static final String DISHES_REQUIRED = "Dishes are required";
 
     // Constructor privado para prevenir la instanciación
     private MessageConstants() {
