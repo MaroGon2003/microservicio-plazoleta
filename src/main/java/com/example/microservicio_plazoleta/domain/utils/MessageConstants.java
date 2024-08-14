@@ -1,6 +1,6 @@
 package com.example.microservicio_plazoleta.domain.utils;
 
-public class ErrorMessages {
+public class MessageConstants {
 
     public static final String RESTAURANT_ALREADY_EXISTS = "Restaurant already exists";
     public static final String RESTAURANT_IS_NULL = "Restaurant is null";
@@ -12,9 +12,17 @@ public class ErrorMessages {
     public static final String USER_NOT_OWNER = "User is not owner";
     public static final String OWNER_DISH_UPDATE = "Owner can only update their dishes";
     public static final String DISH_LIST_IS_EMPTY = "Dish list is empty";
+    public static final String ORDER_ALREADY_EXISTS = "Order already exists";
+    public static final String CANCELED_STATUS = "CANCELED";
+    public static final String DELIVERED_STATUS = "DELIVERED";
+    public static final String PENDING_STATUS = "PENDING";
+    public static final String ORDER_NOT_FOUND = "Order not found";
+    public static final String ORDER_NOT_BELONG_CUSTOMER = "Order does not belong to the customer";
+    public static final String ORDER_RECEIVES_NO_MORE_DISHES = "Order receives no more dishes";
+    public static final String DISH_NOT_BELONG_RESTAURANT = "Dish does not belong to the restaurant";
 
     // Constructor privado para prevenir la instanciación
-    private ErrorMessages() {
+    private MessageConstants() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 }

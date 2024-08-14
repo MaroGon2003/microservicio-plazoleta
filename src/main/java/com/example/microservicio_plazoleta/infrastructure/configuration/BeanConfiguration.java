@@ -1,22 +1,22 @@
 package com.example.microservicio_plazoleta.infrastructure.configuration;
 
-import com.example.microservicio_plazoleta.domain.api.IDishServicePort;
-import com.example.microservicio_plazoleta.domain.api.IRestaurantServicePort;
-import com.example.microservicio_plazoleta.domain.api.IUserFeignServicePort;
+import com.example.microservicio_plazoleta.domain.api.*;
 import com.example.microservicio_plazoleta.domain.spi.IDishPersistencePort;
+import com.example.microservicio_plazoleta.domain.spi.IDishToOrderPersistencePort;
+import com.example.microservicio_plazoleta.domain.spi.IOrderPersistencePort;
 import com.example.microservicio_plazoleta.domain.spi.IRestaurantPersistencePort;
+import com.example.microservicio_plazoleta.domain.useCase.DishToOrderUseCase;
 import com.example.microservicio_plazoleta.domain.useCase.DishUseCase;
+import com.example.microservicio_plazoleta.domain.useCase.OrderUseCase;
 import com.example.microservicio_plazoleta.domain.useCase.RestaurantUseCase;
 import com.example.microservicio_plazoleta.infrastructure.input.feign.IUserFeignClient;
 import com.example.microservicio_plazoleta.infrastructure.input.feign.impl.UserFeignClient;
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.adapter.DishJpaAdapter;
+import com.example.microservicio_plazoleta.infrastructure.out.jpa.adapter.DishToOrderJpaAdapter;
+import com.example.microservicio_plazoleta.infrastructure.out.jpa.adapter.OrderJpaAdapter;
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.adapter.RestaurantJpaAdapter;
-import com.example.microservicio_plazoleta.infrastructure.out.jpa.mapper.ICategoryEntityMapper;
-import com.example.microservicio_plazoleta.infrastructure.out.jpa.mapper.IDishEntityMapper;
-import com.example.microservicio_plazoleta.infrastructure.out.jpa.mapper.IRestaurantEntityMapper;
-import com.example.microservicio_plazoleta.infrastructure.out.jpa.repository.ICategoryRepository;
-import com.example.microservicio_plazoleta.infrastructure.out.jpa.repository.IDishRepository;
-import com.example.microservicio_plazoleta.infrastructure.out.jpa.repository.IRestaurantRepository;
+import com.example.microservicio_plazoleta.infrastructure.out.jpa.mapper.*;
+import com.example.microservicio_plazoleta.infrastructure.out.jpa.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +32,10 @@ public class BeanConfiguration {
     private final ICategoryRepository categoryRepository;
     private final ICategoryEntityMapper categoryEntityMapper;
     private final IUserFeignClient userFeignClient;
+    private final IOrderRepository orderRepository;
+    private final IOrderEntityMapper orderEntityMapper;
+    private final IDishToOrderRepository dishToOrderRepository;
+    private final IDishToOrderEntityMapper dishToOrderEntityMapper;
 
 
     @Bean
@@ -57,6 +61,26 @@ public class BeanConfiguration {
     @Bean
     public IUserFeignServicePort userFeignServicePort(){
         return new UserFeignClient(userFeignClient);
+    }
+
+    @Bean
+    public IOrderPersistencePort orderPersistencePort(){
+        return new OrderJpaAdapter(orderRepository, orderEntityMapper);
+    }
+
+    @Bean
+    public IOrderServicePort orderServicePort(){
+        return new OrderUseCase(restaurantPersistencePort(), orderPersistencePort());
+    }
+
+    @Bean
+    public IDishToOrderPersistencePort dishToOrderPersistencePort(){
+        return new DishToOrderJpaAdapter(dishToOrderRepository, dishToOrderEntityMapper, orderRepository);
+    }
+
+    @Bean
+    public IDishToOrderServicePort dishToOrderServicePort(){
+        return new DishToOrderUseCase(dishToOrderPersistencePort() , dishPersistencePort() , restaurantPersistencePort());
     }
 
 }

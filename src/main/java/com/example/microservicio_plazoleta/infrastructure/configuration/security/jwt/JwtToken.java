@@ -15,7 +15,7 @@ import java.util.Collections;
 public class JwtToken {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtToken.class);
     private static final String ROLE = "rol";
-    private static final String ACCESS_TOKEN_SECRET = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXvCJ9";
+    public static final String ACCESS_TOKEN_SECRET = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXvCJ9";
 
     private JwtToken () {}
 

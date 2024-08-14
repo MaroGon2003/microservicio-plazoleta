@@ -47,5 +47,29 @@ public class ExceptionManager {
     public ResponseEntity<Map<String,String>> ownerDishUpdateException(OwnerDishUpdateException e) {
         return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
     }
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<Map<String,String>> orderNotFoundException(OrderNotFoundException e) {
+        return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
+    }
+
+    @ExceptionHandler(OrderNotBelongCustomerException.class)
+    public ResponseEntity<Map<String,String>> orderNotBelongCustomerException(OrderNotBelongCustomerException e) {
+        return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
+    }
+
+    @ExceptionHandler(OrderReceivesNoMoreDishesException.class)
+    public ResponseEntity<Map<String,String>> orderReceivesNoMoreDishesException(OrderReceivesNoMoreDishesException e) {
+        return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
+    }
+
+    @ExceptionHandler(OrderAlreadyExistsException.class)
+    public ResponseEntity<Map<String,String>> orderAlreadyExistsException(OrderAlreadyExistsException e) {
+        return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
+    }
+
+    @ExceptionHandler(DishNotBelongRestaurantException.class)
+    public ResponseEntity<Map<String,String>> dishNotBelongRestaurantException(DishNotBelongRestaurantException e) {
+        return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
+    }
 
 }
