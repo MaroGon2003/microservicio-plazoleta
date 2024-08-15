@@ -12,4 +12,6 @@ public interface IOrderPersistencePort {
 
     List<OrderModel> findOrderByCustomerIdAndRestaurantId(Long customerId, Long restaurantId);
 
+    OrderModel getOrderById(Long orderId);
+
 }

@@ -8,4 +8,6 @@ public interface IOrderServicePort {
 
     void saveOrder(Long restaurantId, List<DishToOrderModel> dishes);
 
+    List<DishToOrderModel> getAllOrdersByStatus(int page, int size,Long restaurantId, String status);
+
 }

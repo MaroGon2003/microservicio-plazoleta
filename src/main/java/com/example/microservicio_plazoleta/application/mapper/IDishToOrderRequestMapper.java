@@ -13,7 +13,7 @@ import java.util.List;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface IDishToOrderRequestMapper {
 
-    @Mapping(target = "dishModelId", source = "idDish")
+    @Mapping(target = "dishModel.id", source = "idDish")
     DishToOrderModel toDishToOrderModel(DishToOrderRequestDto dishToOrderRequestDto);
 
     List<DishToOrderModel> toDishToOrderModelList(List<DishToOrderRequestDto> dishToOrderRequestDtoList);

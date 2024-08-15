@@ -7,10 +7,10 @@ import java.util.List;
 
 public interface IOrderRepository extends JpaRepository<OrderEntity, Long> {
 
-    List<OrderEntity> findByIdCustomerAndIdRestaurantId(long idCustomer, long idRestaurant);
-
     boolean existsByIdAndIdCustomer(Long idOrder, Long idCustomer);
 
     boolean existsByIdAndIdCustomerAndStatusContainingIgnoreCase(Long idOrder, Long idCustomer, String status);
+
+    List<OrderEntity> findAllByIdCustomerAndRestaurantEntityId(long idCustomer, long idRestaurant);
 
 }

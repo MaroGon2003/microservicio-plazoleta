@@ -21,12 +21,12 @@ public class DishToOrderEntity {
     @ManyToOne
     @MapsId("idOrder")
     @JoinColumn(name = "id_order", nullable = false)
-    private OrderEntity idOrder;
+    private OrderEntity orderEntity;
 
     @ManyToOne
     @MapsId("idDish")
     @JoinColumn(name = "id_dish", nullable = false)
-    private DishEntity idDish;
+    private DishEntity dishEntity;
 
     @Column(nullable = false)
     private int amount;

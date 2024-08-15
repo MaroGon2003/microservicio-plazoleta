@@ -10,17 +10,17 @@ public class OrderModel {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String status;
-    private Long restaurantId;
+    private RestaurantModel restaurantModel;
 
     public OrderModel() {
     }
 
-    public OrderModel(Long customerId, Long employeeId, LocalDateTime endTime, Long id, Long restaurantId, LocalDateTime startTime, String status) {
+    public OrderModel(Long customerId, Long employeeId, LocalDateTime endTime, Long id, RestaurantModel restaurantModel, LocalDateTime startTime, String status) {
         this.customerId = customerId;
         this.employeeId = employeeId;
         this.endTime = endTime;
         this.id = id;
-        this.restaurantId = restaurantId;
+        this.restaurantModel = restaurantModel;
         this.startTime = startTime;
         this.status = status;
     }
@@ -57,12 +57,12 @@ public class OrderModel {
         this.id = id;
     }
 
-    public Long getRestaurantId() {
-        return restaurantId;
+    public RestaurantModel getRestaurantModel() {
+        return restaurantModel;
     }
 
-    public void setRestaurantId(Long restaurantId) {
-        this.restaurantId = restaurantId;
+    public void setRestaurantModel(RestaurantModel restaurantModel) {
+        this.restaurantModel = restaurantModel;
     }
 
     public LocalDateTime getStartTime() {

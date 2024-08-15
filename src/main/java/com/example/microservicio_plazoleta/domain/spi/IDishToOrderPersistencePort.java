@@ -12,4 +12,6 @@ public interface IDishToOrderPersistencePort {
 
     void saveAll(List<DishToOrderModel> dishToOrderModelList);
 
+    List<DishToOrderModel> getAllOrdersByStatus(int page, int size,Long restaurantId, String status);
+
 }

@@ -2,17 +2,17 @@ package com.example.microservicio_plazoleta.domain.model;
 
 public class DishToOrderModel {
 
-    private Long orderModelId;
-    private Long dishModelId;
+    private OrderModel orderModel;
+    private DishModel dishModel;
     private int amount;
 
     public DishToOrderModel() {
     }
 
-    public DishToOrderModel(int amount, Long dishModelId, Long orderModelId) {
+    public DishToOrderModel(int amount, DishModel dishModel, OrderModel orderModel) {
         this.amount = amount;
-        this.dishModelId = dishModelId;
-        this.orderModelId = orderModelId;
+        this.dishModel = dishModel;
+        this.orderModel = orderModel;
     }
 
     public int getAmount() {
@@ -23,19 +23,19 @@ public class DishToOrderModel {
         this.amount = amount;
     }
 
-    public Long getDishModelId() {
-        return dishModelId;
+    public DishModel getDishModel() {
+        return dishModel;
     }
 
-    public void setDishModelId(Long dishModelId) {
-        this.dishModelId = dishModelId;
+    public void setDishModel(DishModel dishModel) {
+        this.dishModel = dishModel;
     }
 
-    public Long getOrderModelId() {
-        return orderModelId;
+    public OrderModel getOrderModel() {
+        return orderModel;
     }
 
-    public void setOrderModelId(Long orderModelId) {
-        this.orderModelId = orderModelId;
+    public void setOrderModel(OrderModel orderModel) {
+        this.orderModel = orderModel;
     }
 }

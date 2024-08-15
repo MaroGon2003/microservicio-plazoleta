@@ -13,12 +13,12 @@ import java.util.List;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface IOrderEntityMapper {
 
-    @Mapping(source = "restaurantId", target = "idRestaurant.id")
+    @Mapping(source = "restaurantModel", target = "restaurantEntity")
     @Mapping(source = "customerId", target = "idCustomer")
     OrderEntity toOrderEntity(OrderModel orderModel);
 
-    @Mapping(source = "idCustomer", target = "customerId")
-    @Mapping(source = "idRestaurant.id", target = "restaurantId")
     List<OrderModel> toModelList(List<OrderEntity> orderEntityList);
+
+    OrderModel toOrderModel(OrderEntity orderEntity);
 
 }

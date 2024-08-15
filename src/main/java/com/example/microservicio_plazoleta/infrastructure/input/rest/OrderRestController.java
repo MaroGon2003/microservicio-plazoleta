@@ -1,6 +1,7 @@
 package com.example.microservicio_plazoleta.infrastructure.input.rest;
 
 import com.example.microservicio_plazoleta.application.dto.request.OrderRequestDto;
+import com.example.microservicio_plazoleta.application.dto.response.OrderResponseDto;
 import com.example.microservicio_plazoleta.application.handler.IOrderHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/order")
@@ -31,6 +34,17 @@ public class OrderRestController {
         orderHandler.saveOrder(orderRequestDto);
 
         return ResponseEntity.ok().build();
+    }
+
+    @Secured({"EMPLOYEE"})
+    @Operation(summary = "Get all orders")
+    @GetMapping("/get-all-orders")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "orders found")
+    })
+    public ResponseEntity<List<OrderResponseDto>> getAllOrders(@RequestParam int page, @RequestParam int size, @RequestParam Long restaurantId ,@RequestParam String status) {
+
+        return ResponseEntity.ok(orderHandler.getAllOrdersByStatus(page, size, restaurantId, status));
     }
 
 

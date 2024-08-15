@@ -5,6 +5,7 @@ import com.example.microservicio_plazoleta.domain.exception.*;
 import com.example.microservicio_plazoleta.domain.model.DishModel;
 import com.example.microservicio_plazoleta.domain.model.DishToOrderModel;
 import com.example.microservicio_plazoleta.domain.model.OrderModel;
+import com.example.microservicio_plazoleta.domain.model.RestaurantModel;
 import com.example.microservicio_plazoleta.domain.spi.IDishPersistencePort;
 import com.example.microservicio_plazoleta.domain.spi.IDishToOrderPersistencePort;
 import com.example.microservicio_plazoleta.domain.spi.IOrderPersistencePort;
@@ -34,7 +35,8 @@ public class OrderUseCase implements IOrderServicePort {
         if (restaurantId == null) {
             throw new NullPointerException("restaurantId is required");
         }
-        if (restaurantPersistencePort.getRestaurantById(restaurantId) == null) {
+        RestaurantModel restaurant = restaurantPersistencePort.getRestaurantById(restaurantId);
+        if (restaurant == null) {
             throw new RestaurantNotFoundException(MessageConstants.RESTAURANT_NOT_FOUND);
         }
 
@@ -61,7 +63,7 @@ public class OrderUseCase implements IOrderServicePort {
         }
 
         OrderModel orderModel = new OrderModel();
-        orderModel.setRestaurantId(restaurantId);
+        orderModel.setRestaurantModel(restaurant);
         orderModel.setCustomerId(customerId);
         orderModel.setStartTime(LocalDateTime.now());
         orderModel.setStatus(MessageConstants.PENDING_STATUS);
@@ -72,7 +74,21 @@ public class OrderUseCase implements IOrderServicePort {
 
     }
 
+    @Override
+    public List<DishToOrderModel> getAllOrdersByStatus(int page, int size, Long restaurantId , String status) {
+
+        List<DishToOrderModel> dishToOrderModelList = dishToOrderPersistencePort.getAllOrdersByStatus(page, size, restaurantId, status);
+
+        if (dishToOrderModelList.isEmpty()) {
+            throw new OrderNotFoundException(MessageConstants.ORDER_NOT_FOUND);
+        }
+
+        return dishToOrderModelList;
+    }
+
     private void saveDishToOrder(Long orderId, Long customerId,Long restaurantId, List<DishToOrderModel> dishes) {
+
+        OrderModel order = orderPersistencePort.getOrderById(orderId);
 
         if(!dishToOrderPersistencePort.existsOrderByOrderIdAndCustomerId(orderId, customerId)) {
             throw new OrderNotBelongCustomerException(MessageConstants.ORDER_NOT_BELONG_CUSTOMER);
@@ -82,12 +98,12 @@ public class OrderUseCase implements IOrderServicePort {
         }
 
          dishes = dishes.stream().peek(d -> {
-            d.setOrderModelId(orderId);
-            DishModel dish = dishPersistencePort.getDishById(d.getDishModelId());
+            d.setOrderModel(order);
+            DishModel dish = dishPersistencePort.getDishById(d.getDishModel().getId());
             if(dish == null) {
                 throw new DishNotFoundException(MessageConstants.DISH_NOT_FOUND);
             }
-            if (dishPersistencePort.getDishByRestaurantIdAndDishId(restaurantId, d.getDishModelId()) == null) {
+            if (dishPersistencePort.getDishByRestaurantIdAndDishId(restaurantId, d.getDishModel().getId()) == null) {
                 throw new DishNotBelongRestaurantException(MessageConstants.DISH_NOT_BELONG_RESTAURANT);
             }
          }).toList();
