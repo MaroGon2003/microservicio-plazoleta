@@ -15,10 +15,14 @@ public interface IOrderEntityMapper {
 
     @Mapping(source = "restaurantModel", target = "restaurantEntity")
     @Mapping(source = "customerId", target = "idCustomer")
+    @Mapping(source = "employeeId", target = "idEmployee")
     OrderEntity toOrderEntity(OrderModel orderModel);
 
     List<OrderModel> toModelList(List<OrderEntity> orderEntityList);
 
+    @Mapping(source = "restaurantEntity", target = "restaurantModel")
+    @Mapping(source = "idCustomer", target = "customerId")
+    @Mapping(source = "idEmployee", target = "employeeId")
     OrderModel toOrderModel(OrderEntity orderEntity);
 
 }

@@ -14,4 +14,6 @@ public interface IOrderPersistencePort {
 
     OrderModel getOrderById(Long orderId);
 
+    void updateOrder(OrderModel orderModel);
+
 }

@@ -1,19 +1,18 @@
 package com.example.microservicio_plazoleta.infrastructure.configuration;
 
 import com.example.microservicio_plazoleta.domain.api.*;
-import com.example.microservicio_plazoleta.domain.spi.IDishPersistencePort;
-import com.example.microservicio_plazoleta.domain.spi.IDishToOrderPersistencePort;
-import com.example.microservicio_plazoleta.domain.spi.IOrderPersistencePort;
-import com.example.microservicio_plazoleta.domain.spi.IRestaurantPersistencePort;
+import com.example.microservicio_plazoleta.domain.spi.*;
 import com.example.microservicio_plazoleta.domain.useCase.DishUseCase;
 import com.example.microservicio_plazoleta.domain.useCase.OrderUseCase;
+import com.example.microservicio_plazoleta.domain.useCase.RestaurantEmployeeUseCase;
 import com.example.microservicio_plazoleta.domain.useCase.RestaurantUseCase;
-import com.example.microservicio_plazoleta.infrastructure.input.feign.IUserFeignClient;
-import com.example.microservicio_plazoleta.infrastructure.input.feign.impl.UserFeignClient;
-import com.example.microservicio_plazoleta.infrastructure.out.jpa.adapter.DishJpaAdapter;
-import com.example.microservicio_plazoleta.infrastructure.out.jpa.adapter.DishToOrderJpaAdapter;
-import com.example.microservicio_plazoleta.infrastructure.out.jpa.adapter.OrderJpaAdapter;
-import com.example.microservicio_plazoleta.infrastructure.out.jpa.adapter.RestaurantJpaAdapter;
+import com.example.microservicio_plazoleta.infrastructure.input.feign.client.ITraceabilityFeignClient;
+import com.example.microservicio_plazoleta.infrastructure.input.feign.client.IUserFeignClient;
+import com.example.microservicio_plazoleta.infrastructure.input.feign.client.impl.TraceabilityFeignClient;
+import com.example.microservicio_plazoleta.infrastructure.input.feign.client.impl.UserFeignClient;
+import com.example.microservicio_plazoleta.infrastructure.input.feign.mapper.ITraceabilityDtoMapper;
+import com.example.microservicio_plazoleta.infrastructure.input.feign.mapper.IUserResponseMapper;
+import com.example.microservicio_plazoleta.infrastructure.out.jpa.adapter.*;
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.mapper.*;
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +34,12 @@ public class BeanConfiguration {
     private final IOrderEntityMapper orderEntityMapper;
     private final IDishToOrderRepository dishToOrderRepository;
     private final IDishToOrderEntityMapper dishToOrderEntityMapper;
+    private final IUserResponseMapper userResponseMapper;
+    private final IRestaurantEmployeeRepository restaurantEmployeeRepository;
+    private final IRestaurantEmployeeEntityMapper restaurantEmployeeEntityMapper;
+    private final ITraceabilityFeignClient traceabilityFeignClient;
+    private final ITraceabilityDtoMapper traceabilityDtoMapper;
+
 
 
     @Bean
@@ -59,7 +64,12 @@ public class BeanConfiguration {
 
     @Bean
     public IUserFeignServicePort userFeignServicePort(){
-        return new UserFeignClient(userFeignClient);
+        return new UserFeignClient(userFeignClient, userResponseMapper);
+    }
+
+    @Bean
+    public ITraceabilityFeignClientPort traceabilityFeignClientPort(){
+        return new TraceabilityFeignClient(traceabilityFeignClient, traceabilityDtoMapper);
     }
 
     @Bean
@@ -69,12 +79,22 @@ public class BeanConfiguration {
 
     @Bean
     public IOrderServicePort orderServicePort(){
-        return new OrderUseCase(restaurantPersistencePort(), orderPersistencePort(), dishToOrderPersistencePort(), dishPersistencePort());
+        return new OrderUseCase(restaurantPersistencePort(), orderPersistencePort(), dishToOrderPersistencePort(), dishPersistencePort(), restauranEmployeePersistencePort(),userFeignServicePort(), traceabilityFeignClientPort());
     }
 
     @Bean
     public IDishToOrderPersistencePort dishToOrderPersistencePort(){
         return new DishToOrderJpaAdapter(dishToOrderRepository, dishToOrderEntityMapper, orderRepository);
+    }
+
+    @Bean
+    public IRestaurandEnployeePersistencePort restauranEmployeePersistencePort(){
+        return new RestaurantEmployeeJpaAdapter(restaurantEmployeeRepository, restaurantRepository, restaurantEmployeeEntityMapper);
+    }
+
+    @Bean
+    public IRestaurandEnployeeServicePort restaurandEnployeeServicePort(){
+        return new RestaurantEmployeeUseCase(restauranEmployeePersistencePort(), userFeignServicePort());
     }
 
 }

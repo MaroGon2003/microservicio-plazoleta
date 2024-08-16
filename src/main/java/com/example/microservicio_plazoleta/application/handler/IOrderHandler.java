@@ -11,4 +11,6 @@ public interface IOrderHandler {
 
     List<OrderResponseDto> getAllOrdersByStatus(int page, int size,Long restaurantId, String status);
 
+    void assignEmployee(Long id);
+
 }

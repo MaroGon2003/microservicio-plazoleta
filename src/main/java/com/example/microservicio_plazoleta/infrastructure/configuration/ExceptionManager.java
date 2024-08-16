@@ -77,4 +77,19 @@ public class ExceptionManager {
         return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String,String>> userNotFoundException(UserNotFoundException e) {
+        return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
+    }
+
+    @ExceptionHandler(EmployeeAlreadyContractedException.class)
+    public ResponseEntity<Map<String,String>> employeeAlreadyContractedException(EmployeeAlreadyContractedException e) {
+        return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
+    }
+
+    @ExceptionHandler(UserNotIsEmployeeException.class)
+    public ResponseEntity<Map<String,String>> userNotIsEmployeeException(UserNotIsEmployeeException e) {
+        return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
+    }
+
 }

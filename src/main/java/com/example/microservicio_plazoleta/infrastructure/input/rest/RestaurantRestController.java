@@ -1,7 +1,9 @@
 package com.example.microservicio_plazoleta.infrastructure.input.rest;
 
+import com.example.microservicio_plazoleta.application.dto.request.RestaurantEmployeeRequestDto;
 import com.example.microservicio_plazoleta.application.dto.request.RestaurantRequestDto;
 import com.example.microservicio_plazoleta.application.dto.response.RestaurantResponseDto;
+import com.example.microservicio_plazoleta.application.handler.IRestaurantEmployeeHandler;
 import com.example.microservicio_plazoleta.application.handler.IRestaurantHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +25,7 @@ import java.util.List;
 public class RestaurantRestController {
 
     private final IRestaurantHandler restaurantHandler;
+    private final IRestaurantEmployeeHandler restaurantEmployeeHandler;
 
 
     @Secured("ADMIN")
@@ -42,6 +45,13 @@ public class RestaurantRestController {
     @GetMapping("/all-restaurants")
     public ResponseEntity<List<RestaurantResponseDto>> getAllRestaurants(@RequestParam int pageNumber, @RequestParam int pageSize) {
         return ResponseEntity.ok(restaurantHandler.getAllRestaurants(pageNumber, pageSize));
+    }
+
+    @Secured({"OWNER"})
+    @PostMapping("/contract-employee")
+    public ResponseEntity<String> contractEmployee(@RequestBody @Valid RestaurantEmployeeRequestDto restaurantEmployeeRequestDto) {
+        restaurantEmployeeHandler.contractEmployee(restaurantEmployeeRequestDto);
+        return ResponseEntity.ok("Employee contracted successfully");
     }
 
 }

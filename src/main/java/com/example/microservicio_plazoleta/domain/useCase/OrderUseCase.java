@@ -1,15 +1,11 @@
 package com.example.microservicio_plazoleta.domain.useCase;
 
 import com.example.microservicio_plazoleta.domain.api.IOrderServicePort;
+import com.example.microservicio_plazoleta.domain.api.ITraceabilityFeignClientPort;
+import com.example.microservicio_plazoleta.domain.api.IUserFeignServicePort;
 import com.example.microservicio_plazoleta.domain.exception.*;
-import com.example.microservicio_plazoleta.domain.model.DishModel;
-import com.example.microservicio_plazoleta.domain.model.DishToOrderModel;
-import com.example.microservicio_plazoleta.domain.model.OrderModel;
-import com.example.microservicio_plazoleta.domain.model.RestaurantModel;
-import com.example.microservicio_plazoleta.domain.spi.IDishPersistencePort;
-import com.example.microservicio_plazoleta.domain.spi.IDishToOrderPersistencePort;
-import com.example.microservicio_plazoleta.domain.spi.IOrderPersistencePort;
-import com.example.microservicio_plazoleta.domain.spi.IRestaurantPersistencePort;
+import com.example.microservicio_plazoleta.domain.model.*;
+import com.example.microservicio_plazoleta.domain.spi.*;
 import com.example.microservicio_plazoleta.domain.utils.MessageConstants;
 
 import java.time.LocalDateTime;
@@ -21,12 +17,18 @@ public class OrderUseCase implements IOrderServicePort {
     private final IOrderPersistencePort orderPersistencePort;
     private final IDishToOrderPersistencePort dishToOrderPersistencePort;
     private final IDishPersistencePort dishPersistencePort;
+    private final IRestaurandEnployeePersistencePort restauranEmployeePersistencePort;
+    private final IUserFeignServicePort userFeignServicePort;
+    private final ITraceabilityFeignClientPort traceabilityFeignClientPort;
 
-    public OrderUseCase(IRestaurantPersistencePort restaurantPersistencePort, IOrderPersistencePort orderPersistencePort, IDishToOrderPersistencePort dishToOrderPersistencePort, IDishPersistencePort dishPersistencePort) {
+    public OrderUseCase(IRestaurantPersistencePort restaurantPersistencePort, IOrderPersistencePort orderPersistencePort, IDishToOrderPersistencePort dishToOrderPersistencePort, IDishPersistencePort dishPersistencePort, IRestaurandEnployeePersistencePort restauranEmployeePersistencePort, IUserFeignServicePort userFeignServicePort, ITraceabilityFeignClientPort traceabilityFeignClientPort) {
         this.restaurantPersistencePort = restaurantPersistencePort;
         this.orderPersistencePort = orderPersistencePort;
         this.dishToOrderPersistencePort = dishToOrderPersistencePort;
         this.dishPersistencePort = dishPersistencePort;
+        this.restauranEmployeePersistencePort = restauranEmployeePersistencePort;
+        this.userFeignServicePort = userFeignServicePort;
+        this.traceabilityFeignClientPort = traceabilityFeignClientPort;
     }
 
     @Override
@@ -77,6 +79,12 @@ public class OrderUseCase implements IOrderServicePort {
     @Override
     public List<DishToOrderModel> getAllOrdersByStatus(int page, int size, Long restaurantId , String status) {
 
+        Long employeeId = orderPersistencePort.getAuthenticatedUserId();
+
+        if (!restauranEmployeePersistencePort.isEmployeeContracted(employeeId)) {
+            throw new UserNotIsEmployeeException(MessageConstants.USER_NOT_IS_EMPLOYEE);
+        }
+
         List<DishToOrderModel> dishToOrderModelList = dishToOrderPersistencePort.getAllOrdersByStatus(page, size, restaurantId, status);
 
         if (dishToOrderModelList.isEmpty()) {
@@ -84,6 +92,28 @@ public class OrderUseCase implements IOrderServicePort {
         }
 
         return dishToOrderModelList;
+    }
+
+    @Override
+    public void assignEmployee(Long id) {
+
+        OrderModel order = orderPersistencePort.getOrderById(id);
+
+        if (order == null) {
+            throw new OrderNotFoundException(MessageConstants.ORDER_NOT_FOUND);
+        }
+        Long employeeId = orderPersistencePort.getAuthenticatedUserId();
+
+        if (!restauranEmployeePersistencePort.isEmployeeContracted(employeeId)) {
+            throw new UserNotIsEmployeeException(MessageConstants.USER_NOT_IS_EMPLOYEE);
+        }
+
+        order.setEmployeeId(employeeId);
+        saveTraceability(order, MessageConstants.PREPARING_STATUS);
+        order.setStatus(MessageConstants.PREPARING_STATUS);
+
+        orderPersistencePort.updateOrder(order);
+
     }
 
     private void saveDishToOrder(Long orderId, Long customerId,Long restaurantId, List<DishToOrderModel> dishes) {
@@ -109,6 +139,24 @@ public class OrderUseCase implements IOrderServicePort {
          }).toList();
 
         dishToOrderPersistencePort.saveAll(dishes);
+
+    }
+
+    private void saveTraceability(OrderModel order,String newStatus) {
+
+        UserModel customer = userFeignServicePort.getUserById(order.getCustomerId());
+        UserModel employee = userFeignServicePort.getUserById(order.getEmployeeId());
+
+        TraceabilityModel traceabilityModel = new TraceabilityModel();
+        traceabilityModel.setOrderId(order.getId());
+        traceabilityModel.setCustomerId(order.getCustomerId());
+        traceabilityModel.setCustomerEmail(customer.getEmail());
+        traceabilityModel.setPreviousStatus(order.getStatus());
+        traceabilityModel.setNewStatus(newStatus);
+        traceabilityModel.setEmployeeId(order.getEmployeeId());
+        traceabilityModel.setEmployeeEmail(employee.getEmail());
+
+        traceabilityFeignClientPort.saveTraceability(traceabilityModel);
 
     }
 }

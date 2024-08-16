@@ -22,6 +22,11 @@ public class JwtAuthorizationExtractor {
 
     }
 
+    public static String extractUserRol() {
+        Claims claims = getClaims();
+        return claims.get("rol", String.class);
+    }
+
     private static Claims getClaims() {
 
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

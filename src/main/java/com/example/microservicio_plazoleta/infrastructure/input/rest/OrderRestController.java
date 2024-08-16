@@ -47,5 +47,13 @@ public class OrderRestController {
         return ResponseEntity.ok(orderHandler.getAllOrdersByStatus(page, size, restaurantId, status));
     }
 
+    @Secured({"EMPLOYEE"})
+    @PatchMapping("/assign-employee/{id}")
+    public ResponseEntity<String> assignEmployee(@PathVariable Long id) {
+        orderHandler.assignEmployee(id);
+        return ResponseEntity.ok("Employee assigned successfully");
+    }
+
+
 
 }

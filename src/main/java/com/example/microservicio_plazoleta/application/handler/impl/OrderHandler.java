@@ -30,4 +30,9 @@ public class OrderHandler implements IOrderHandler {
         List<DishToOrderModel> dishToOrderModelList= orderServicePort.getAllOrdersByStatus(page, size, restaurantId, status);
         return dishToOrderResponseMapper.toOrderResponseList(dishToOrderModelList);
     }
+
+    @Override
+    public void assignEmployee(Long id) {
+        orderServicePort.assignEmployee(id);
+    }
 }
