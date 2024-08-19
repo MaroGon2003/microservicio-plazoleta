@@ -55,16 +55,16 @@ public class OrderRestController {
     }
 
     @Secured({"EMPLOYEE"})
-    @PatchMapping("/change-status/{id}")
-    public ResponseEntity<String> changeStatus(@PathVariable Long id, @RequestParam String status) {
-        orderHandler.changeStatus(id, status);
-        return ResponseEntity.ok("Status changed successfully");
+    @PatchMapping("/ready-order/{id}")
+    public ResponseEntity<String> changeStatus(@PathVariable Long id) {
+        orderHandler.readyOrder(id);
+        return ResponseEntity.ok("Order ready successfully");
     }
 
     @Secured({"EMPLOYEE"})
     @PatchMapping("/deliver-order/{id}")
     public ResponseEntity<String> deliverOrder(@PathVariable Long id,@RequestParam int pin) {
-        orderHandler.delyveryOrder(id, pin);
+        orderHandler.deliveryOrder(id, pin);
         return ResponseEntity.ok("Order delivered successfully");
     }
 

@@ -37,12 +37,12 @@ public class OrderHandler implements IOrderHandler {
     }
 
     @Override
-    public void changeStatus(Long id, String status) {
-        orderServicePort.changeStatus(id, status);
+    public void readyOrder(Long id) {
+        orderServicePort.readyOrder(id);
     }
 
     @Override
-    public void delyveryOrder(Long id, int pin) {
-        orderServicePort.delyveryOrder(id, pin);
+    public void deliveryOrder(Long id, int pin) {
+        orderServicePort.deliveryOrder(id, pin);
     }
 }

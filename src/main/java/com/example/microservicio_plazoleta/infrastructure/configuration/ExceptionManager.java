@@ -92,11 +92,6 @@ public class ExceptionManager {
         return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
     }
 
-    @ExceptionHandler(StatusIsNotValidException.class)
-    public ResponseEntity<Map<String,String>> statusIsNotValidException(StatusIsNotValidException e) {
-        return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
-    }
-
     @ExceptionHandler(OrderNotReadyException.class)
     public ResponseEntity<Map<String,String>> orderNotReadyException(OrderNotReadyException e) {
         return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
@@ -114,6 +109,11 @@ public class ExceptionManager {
 
     @ExceptionHandler(VerificationCodeNotMatchException.class)
     public ResponseEntity<Map<String,String>> verificationCodeNotMatchException(VerificationCodeNotMatchException e) {
+        return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
+    }
+
+    @ExceptionHandler(OrderAlreadyCanceledException.class)
+    public ResponseEntity<Map<String,String>> orderAlreadyCanceledException(OrderAlreadyCanceledException e) {
         return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
     }
 

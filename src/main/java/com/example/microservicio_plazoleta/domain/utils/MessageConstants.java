@@ -33,7 +33,7 @@ public class MessageConstants {
     public static final String VERIFICATION_CODE_NOT_FOUND = "Verification code not found";
     public static final String VERIFICATION_CODE_NOT_MATCH = "Verification code does not match";
     public static final String ORDER_NOT_READY = "Order is not ready";
-    public static final String STATUS_IS_NOT_VALID = "Status is not valid";
+    public static final String ORDER_ALREADY_CANCELED = "Order already canceled";
 
     // Constructor privado para prevenir la instanciación
     private MessageConstants() {

@@ -122,7 +122,7 @@ public class OrderUseCase implements IOrderServicePort {
     }
 
     @Override
-    public void changeStatus(Long id, String status) {
+    public void readyOrder(Long id) {
 
         OrderModel order = orderPersistencePort.getOrderById(id);
 
@@ -130,9 +130,9 @@ public class OrderUseCase implements IOrderServicePort {
             throw new OrderNotFoundException(MessageConstants.ORDER_NOT_FOUND);
         }
 
-        if (!status.equalsIgnoreCase(MessageConstants.READY_STATUS) &&
-                !status.equalsIgnoreCase(MessageConstants.CANCELED_STATUS)) {
-            throw new StatusIsNotValidException(MessageConstants.STATUS_IS_NOT_VALID);
+        if (order.getStatus().equalsIgnoreCase(MessageConstants.CANCELED_STATUS) ||
+                order.getStatus().equalsIgnoreCase(MessageConstants.DELIVERED_STATUS)) {
+            throw new OrderAlreadyCanceledOrDeliveredException(MessageConstants.ORDER_ALREADY_CANCELED_OR_DELIVERED);
         }
 
         Long employeeId = orderPersistencePort.getAuthenticatedUserId();
@@ -147,33 +147,34 @@ public class OrderUseCase implements IOrderServicePort {
 
         UserModel customer = userFeignServicePort.getUserById(order.getCustomerId());
 
-        if (status.equalsIgnoreCase(MessageConstants.READY_STATUS)){
+        int pin = verificationCodePort.generateVerificationCode();
 
-            int pin = verificationCodePort.generateVerificationCode();
+        VerificationCodeModel verificationCodeModel = new VerificationCodeModel();
+        verificationCodeModel.setPin(pin);
+        verificationCodeModel.setIdOrder(order.getId());
 
-            VerificationCodeModel verificationCodeModel = new VerificationCodeModel();
-            verificationCodeModel.setPin(pin);
-            verificationCodeModel.setIdOrder(order.getId());
+        twilioFeignClientPort.sendMessage(new TwilioModel(MessageConstants.ORDER_READY_NOTIFICATION + String.valueOf(pin),customer.getPhone()));
 
-            twilioFeignClientPort.sendMessage(new TwilioModel(MessageConstants.ORDER_READY_NOTIFICATION + String.valueOf(pin),customer.getPhone()));
+        verificationCodePersistencePort.saveVerificationCode(verificationCodeModel);
 
-            verificationCodePersistencePort.saveVerificationCode(verificationCodeModel);
-        }
-
-        saveTraceability(order, status);
-        order.setStatus(status.toUpperCase());
+        saveTraceability(order, MessageConstants.READY_STATUS);
+        order.setStatus(MessageConstants.READY_STATUS);
 
         orderPersistencePort.updateOrder(order);
 
     }
 
     @Override
-    public void delyveryOrder(Long idOrder, int pin) {
+    public void deliveryOrder(Long idOrder, int pin) {
 
         OrderModel order = orderPersistencePort.getOrderById(idOrder);
 
         if (order == null) {
             throw new OrderNotFoundException(MessageConstants.ORDER_NOT_FOUND);
+        }
+
+        if (order.getStatus().equalsIgnoreCase(MessageConstants.CANCELED_STATUS)) {
+            throw new OrderAlreadyCanceledException(MessageConstants.ORDER_ALREADY_CANCELED);
         }
 
         if (!order.getStatus().equalsIgnoreCase(MessageConstants.READY_STATUS)) {
