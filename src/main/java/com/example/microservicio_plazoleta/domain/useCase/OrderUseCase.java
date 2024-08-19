@@ -214,7 +214,6 @@ public class OrderUseCase implements IOrderServicePort {
         order.setEndTime(LocalDateTime.now());
 
         orderPersistencePort.updateOrder(order);
-
     }
 
     private void saveDishToOrder(Long orderId, Long customerId,Long restaurantId, List<DishToOrderModel> dishes) {
