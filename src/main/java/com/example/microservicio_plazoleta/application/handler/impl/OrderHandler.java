@@ -35,4 +35,14 @@ public class OrderHandler implements IOrderHandler {
     public void assignEmployee(Long id) {
         orderServicePort.assignEmployee(id);
     }
+
+    @Override
+    public void changeStatus(Long id, String status) {
+        orderServicePort.changeStatus(id, status);
+    }
+
+    @Override
+    public void delyveryOrder(Long id, int pin) {
+        orderServicePort.delyveryOrder(id, pin);
+    }
 }

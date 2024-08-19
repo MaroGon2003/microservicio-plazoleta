@@ -54,6 +54,19 @@ public class OrderRestController {
         return ResponseEntity.ok("Employee assigned successfully");
     }
 
+    @Secured({"EMPLOYEE"})
+    @PatchMapping("/change-status/{id}")
+    public ResponseEntity<String> changeStatus(@PathVariable Long id, @RequestParam String status) {
+        orderHandler.changeStatus(id, status);
+        return ResponseEntity.ok("Status changed successfully");
+    }
+
+    @Secured({"EMPLOYEE"})
+    @PatchMapping("/deliver-order/{id}")
+    public ResponseEntity<String> deliverOrder(@PathVariable Long id,@RequestParam int pin) {
+        orderHandler.delyveryOrder(id, pin);
+        return ResponseEntity.ok("Order delivered successfully");
+    }
 
 
 }

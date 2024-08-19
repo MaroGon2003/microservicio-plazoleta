@@ -1,8 +1,6 @@
 package com.example.microservicio_plazoleta.domain.useCase;
 
-import com.example.microservicio_plazoleta.domain.api.IOrderServicePort;
-import com.example.microservicio_plazoleta.domain.api.ITraceabilityFeignClientPort;
-import com.example.microservicio_plazoleta.domain.api.IUserFeignServicePort;
+import com.example.microservicio_plazoleta.domain.api.*;
 import com.example.microservicio_plazoleta.domain.exception.*;
 import com.example.microservicio_plazoleta.domain.model.*;
 import com.example.microservicio_plazoleta.domain.spi.*;
@@ -10,6 +8,7 @@ import com.example.microservicio_plazoleta.domain.utils.MessageConstants;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 public class OrderUseCase implements IOrderServicePort {
 
@@ -20,8 +19,11 @@ public class OrderUseCase implements IOrderServicePort {
     private final IRestaurandEnployeePersistencePort restauranEmployeePersistencePort;
     private final IUserFeignServicePort userFeignServicePort;
     private final ITraceabilityFeignClientPort traceabilityFeignClientPort;
+    private final ITwilioFeignClientPort twilioFeignClientPort;
+    private final IVerificationCodePort verificationCodePort;
+    private final IVerificationCodePersistencePort verificationCodePersistencePort;
 
-    public OrderUseCase(IRestaurantPersistencePort restaurantPersistencePort, IOrderPersistencePort orderPersistencePort, IDishToOrderPersistencePort dishToOrderPersistencePort, IDishPersistencePort dishPersistencePort, IRestaurandEnployeePersistencePort restauranEmployeePersistencePort, IUserFeignServicePort userFeignServicePort, ITraceabilityFeignClientPort traceabilityFeignClientPort) {
+    public OrderUseCase(IRestaurantPersistencePort restaurantPersistencePort, IOrderPersistencePort orderPersistencePort, IDishToOrderPersistencePort dishToOrderPersistencePort, IDishPersistencePort dishPersistencePort, IRestaurandEnployeePersistencePort restauranEmployeePersistencePort, IUserFeignServicePort userFeignServicePort, ITraceabilityFeignClientPort traceabilityFeignClientPort, ITwilioFeignClientPort twilioFeignClientPort, IVerificationCodePort verificationCodePort, IVerificationCodePersistencePort verificationCodePersistencePort) {
         this.restaurantPersistencePort = restaurantPersistencePort;
         this.orderPersistencePort = orderPersistencePort;
         this.dishToOrderPersistencePort = dishToOrderPersistencePort;
@@ -29,13 +31,16 @@ public class OrderUseCase implements IOrderServicePort {
         this.restauranEmployeePersistencePort = restauranEmployeePersistencePort;
         this.userFeignServicePort = userFeignServicePort;
         this.traceabilityFeignClientPort = traceabilityFeignClientPort;
+        this.twilioFeignClientPort = twilioFeignClientPort;
+        this.verificationCodePort = verificationCodePort;
+        this.verificationCodePersistencePort = verificationCodePersistencePort;
     }
 
     @Override
     public void saveOrder(Long restaurantId, List<DishToOrderModel> dishes) {
 
         if (restaurantId == null) {
-            throw new NullPointerException("restaurantId is required");
+            throw new NullPointerException();
         }
         RestaurantModel restaurant = restaurantPersistencePort.getRestaurantById(restaurantId);
         if (restaurant == null) {
@@ -49,7 +54,7 @@ public class OrderUseCase implements IOrderServicePort {
         Long customerId = orderPersistencePort.getAuthenticatedUserId();
 
         if (customerId == null) {
-            throw new NullPointerException("costumerId is required");
+            throw new NullPointerException();
         }
 
         List<OrderModel> orders = orderPersistencePort.findOrderByCustomerIdAndRestaurantId(customerId, restaurantId);
@@ -116,6 +121,101 @@ public class OrderUseCase implements IOrderServicePort {
 
     }
 
+    @Override
+    public void changeStatus(Long id, String status) {
+
+        OrderModel order = orderPersistencePort.getOrderById(id);
+
+        if (order == null) {
+            throw new OrderNotFoundException(MessageConstants.ORDER_NOT_FOUND);
+        }
+
+        if (!status.equalsIgnoreCase(MessageConstants.READY_STATUS) &&
+                !status.equalsIgnoreCase(MessageConstants.CANCELED_STATUS)) {
+            throw new StatusIsNotValidException(MessageConstants.STATUS_IS_NOT_VALID);
+        }
+
+        Long employeeId = orderPersistencePort.getAuthenticatedUserId();
+
+        if (!restauranEmployeePersistencePort.isEmployeeContracted(employeeId)) {
+            throw new UserNotIsEmployeeException(MessageConstants.USER_NOT_IS_EMPLOYEE);
+        }
+
+        if (!Objects.equals(order.getEmployeeId(), employeeId)) {
+            throw new OrderNotBelongEmployeeException(MessageConstants.ORDER_NOT_BELONG_EMPLOYEE);
+        }
+
+        UserModel customer = userFeignServicePort.getUserById(order.getCustomerId());
+
+        if (status.equalsIgnoreCase(MessageConstants.READY_STATUS)){
+
+            int pin = verificationCodePort.generateVerificationCode();
+
+            VerificationCodeModel verificationCodeModel = new VerificationCodeModel();
+            verificationCodeModel.setPin(pin);
+            verificationCodeModel.setIdOrder(order.getId());
+
+            twilioFeignClientPort.sendMessage(new TwilioModel(MessageConstants.ORDER_READY_NOTIFICATION + String.valueOf(pin),customer.getPhone()));
+
+            verificationCodePersistencePort.saveVerificationCode(verificationCodeModel);
+        }
+
+        saveTraceability(order, status);
+        order.setStatus(status.toUpperCase());
+
+        orderPersistencePort.updateOrder(order);
+
+    }
+
+    @Override
+    public void delyveryOrder(Long idOrder, int pin) {
+
+        OrderModel order = orderPersistencePort.getOrderById(idOrder);
+
+        if (order == null) {
+            throw new OrderNotFoundException(MessageConstants.ORDER_NOT_FOUND);
+        }
+
+        if (!order.getStatus().equalsIgnoreCase(MessageConstants.READY_STATUS)) {
+            throw new OrderNotReadyException(MessageConstants.ORDER_NOT_READY);
+        }
+
+        Long employeeId = orderPersistencePort.getAuthenticatedUserId();
+
+        if (!restauranEmployeePersistencePort.isEmployeeContracted(employeeId)) {
+            throw new UserNotIsEmployeeException(MessageConstants.USER_NOT_IS_EMPLOYEE);
+        }
+
+        if (!Objects.equals(order.getEmployeeId(), employeeId)) {
+            throw new OrderNotBelongEmployeeException(MessageConstants.ORDER_NOT_BELONG_EMPLOYEE);
+        }
+
+        if (order.getStatus().equalsIgnoreCase(MessageConstants.CANCELED_STATUS) ||
+                order.getStatus().equalsIgnoreCase(MessageConstants.DELIVERED_STATUS)) {
+            throw new OrderAlreadyCanceledOrDeliveredException(MessageConstants.ORDER_ALREADY_CANCELED_OR_DELIVERED);
+        }
+
+        if (pin == 0) {
+            throw new PinIsRequiredException(MessageConstants.PIN_IS_REQUIRED);
+        }
+
+        VerificationCodeModel verificationCodeModel = verificationCodePersistencePort.getVerificationCode(idOrder);
+
+        if (verificationCodeModel == null) {
+            throw new VerificationCodeNotFoundException(MessageConstants.VERIFICATION_CODE_NOT_FOUND);
+        }
+        if (verificationCodeModel.getPin() != pin) {
+            throw new VerificationCodeNotMatchException(MessageConstants.VERIFICATION_CODE_NOT_MATCH);
+        }
+
+        saveTraceability(order, MessageConstants.DELIVERED_STATUS);
+        order.setStatus(MessageConstants.DELIVERED_STATUS);
+        order.setEndTime(LocalDateTime.now());
+
+        orderPersistencePort.updateOrder(order);
+
+    }
+
     private void saveDishToOrder(Long orderId, Long customerId,Long restaurantId, List<DishToOrderModel> dishes) {
 
         OrderModel order = orderPersistencePort.getOrderById(orderId);
@@ -159,4 +259,5 @@ public class OrderUseCase implements IOrderServicePort {
         traceabilityFeignClientPort.saveTraceability(traceabilityModel);
 
     }
+
 }

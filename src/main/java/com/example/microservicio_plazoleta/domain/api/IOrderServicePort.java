@@ -12,4 +12,8 @@ public interface IOrderServicePort {
 
     void assignEmployee(Long id);
 
+    void changeStatus(Long id, String status);
+
+    void delyveryOrder(Long id, int pin);
+
 }

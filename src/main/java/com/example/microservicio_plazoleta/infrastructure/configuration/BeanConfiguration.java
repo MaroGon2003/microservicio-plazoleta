@@ -7,14 +7,18 @@ import com.example.microservicio_plazoleta.domain.useCase.OrderUseCase;
 import com.example.microservicio_plazoleta.domain.useCase.RestaurantEmployeeUseCase;
 import com.example.microservicio_plazoleta.domain.useCase.RestaurantUseCase;
 import com.example.microservicio_plazoleta.infrastructure.input.feign.client.ITraceabilityFeignClient;
+import com.example.microservicio_plazoleta.infrastructure.input.feign.client.ITwilioFeignClient;
 import com.example.microservicio_plazoleta.infrastructure.input.feign.client.IUserFeignClient;
 import com.example.microservicio_plazoleta.infrastructure.input.feign.client.impl.TraceabilityFeignClient;
+import com.example.microservicio_plazoleta.infrastructure.input.feign.client.impl.TwilioFeignClient;
 import com.example.microservicio_plazoleta.infrastructure.input.feign.client.impl.UserFeignClient;
 import com.example.microservicio_plazoleta.infrastructure.input.feign.mapper.ITraceabilityDtoMapper;
+import com.example.microservicio_plazoleta.infrastructure.input.feign.mapper.ITwilioRequestMapper;
 import com.example.microservicio_plazoleta.infrastructure.input.feign.mapper.IUserResponseMapper;
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.adapter.*;
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.mapper.*;
 import com.example.microservicio_plazoleta.infrastructure.out.jpa.repository.*;
+import com.example.microservicio_plazoleta.infrastructure.out.verification.adapter.VerificationCodeAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +43,10 @@ public class BeanConfiguration {
     private final IRestaurantEmployeeEntityMapper restaurantEmployeeEntityMapper;
     private final ITraceabilityFeignClient traceabilityFeignClient;
     private final ITraceabilityDtoMapper traceabilityDtoMapper;
+    private final ITwilioFeignClient twilioFeignClient;
+    private final ITwilioRequestMapper twilioRequestMapper;
+    private final IVerificationCodeRepository verificationCodeRepository;
+    private final IVerificationCodeEntityMapper verificationCodeEntityMapper;
 
 
 
@@ -73,13 +81,18 @@ public class BeanConfiguration {
     }
 
     @Bean
+    public ITwilioFeignClientPort twilioFeignClientPort(){
+        return new TwilioFeignClient(twilioFeignClient,twilioRequestMapper);
+    }
+
+    @Bean
     public IOrderPersistencePort orderPersistencePort(){
         return new OrderJpaAdapter(orderRepository, orderEntityMapper);
     }
 
     @Bean
     public IOrderServicePort orderServicePort(){
-        return new OrderUseCase(restaurantPersistencePort(), orderPersistencePort(), dishToOrderPersistencePort(), dishPersistencePort(), restauranEmployeePersistencePort(),userFeignServicePort(), traceabilityFeignClientPort());
+        return new OrderUseCase(restaurantPersistencePort(), orderPersistencePort(), dishToOrderPersistencePort(), dishPersistencePort(), restauranEmployeePersistencePort(),userFeignServicePort(), traceabilityFeignClientPort(),twilioFeignClientPort(), verificationCodePort(), verificationCodePersistencePort());
     }
 
     @Bean
@@ -95,6 +108,16 @@ public class BeanConfiguration {
     @Bean
     public IRestaurandEnployeeServicePort restaurandEnployeeServicePort(){
         return new RestaurantEmployeeUseCase(restauranEmployeePersistencePort(), userFeignServicePort());
+    }
+
+    @Bean
+    public IVerificationCodePort verificationCodePort(){
+        return new VerificationCodeAdapter();
+    }
+
+    @Bean
+    public IVerificationCodePersistencePort verificationCodePersistencePort(){
+        return new VerificationCodeJpaAdapter(verificationCodeRepository, verificationCodeEntityMapper);
     }
 
 }
