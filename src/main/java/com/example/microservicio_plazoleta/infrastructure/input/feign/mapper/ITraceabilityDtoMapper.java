@@ -5,11 +5,15 @@ import com.example.microservicio_plazoleta.infrastructure.input.feign.dto.Tracea
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface ITraceabilityDtoMapper {
 
     TraceabilityDto toDto(TraceabilityModel traceabilityModel);
+    List<TraceabilityModel> toModelList(List<TraceabilityDto> traceabilityDtoList);
+    List<TraceabilityDto> toDtoList(List<TraceabilityModel> traceabilityModelList);
 
 }

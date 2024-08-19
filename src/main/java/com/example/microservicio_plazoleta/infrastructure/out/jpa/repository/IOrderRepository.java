@@ -13,4 +13,6 @@ public interface IOrderRepository extends JpaRepository<OrderEntity, Long> {
 
     List<OrderEntity> findAllByIdCustomerAndRestaurantEntityId(long idCustomer, long idRestaurant);
 
+    List<OrderEntity> findAllByIdCustomer(long idCustomer);
+
 }

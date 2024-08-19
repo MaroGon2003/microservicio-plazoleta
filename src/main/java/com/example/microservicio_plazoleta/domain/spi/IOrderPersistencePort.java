@@ -12,6 +12,8 @@ public interface IOrderPersistencePort {
 
     List<OrderModel> findOrderByCustomerIdAndRestaurantId(Long customerId, Long restaurantId);
 
+    List<OrderModel> findOrderByCustomerId(Long customerId);
+
     OrderModel getOrderById(Long orderId);
 
     void updateOrder(OrderModel orderModel);

@@ -2,10 +2,7 @@ package com.example.microservicio_plazoleta.infrastructure.configuration;
 
 import com.example.microservicio_plazoleta.domain.api.*;
 import com.example.microservicio_plazoleta.domain.spi.*;
-import com.example.microservicio_plazoleta.domain.useCase.DishUseCase;
-import com.example.microservicio_plazoleta.domain.useCase.OrderUseCase;
-import com.example.microservicio_plazoleta.domain.useCase.RestaurantEmployeeUseCase;
-import com.example.microservicio_plazoleta.domain.useCase.RestaurantUseCase;
+import com.example.microservicio_plazoleta.domain.useCase.*;
 import com.example.microservicio_plazoleta.infrastructure.input.feign.client.ITraceabilityFeignClient;
 import com.example.microservicio_plazoleta.infrastructure.input.feign.client.ITwilioFeignClient;
 import com.example.microservicio_plazoleta.infrastructure.input.feign.client.IUserFeignClient;
@@ -118,6 +115,11 @@ public class BeanConfiguration {
     @Bean
     public IVerificationCodePersistencePort verificationCodePersistencePort(){
         return new VerificationCodeJpaAdapter(verificationCodeRepository, verificationCodeEntityMapper);
+    }
+
+    @Bean
+    public ITraceabilityServicePort traceabilityServicePort(){
+        return new TraceabilityUseCase(orderPersistencePort(), traceabilityFeignClientPort());
     }
 
 }

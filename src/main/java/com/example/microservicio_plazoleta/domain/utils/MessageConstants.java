@@ -35,6 +35,7 @@ public class MessageConstants {
     public static final String ORDER_NOT_READY = "Order is not ready";
     public static final String ORDER_ALREADY_CANCELED = "Order already canceled";
     public static final String ORDER_CANNOT_BE_CANCELED = "Order cannot be canceled";
+    public static final String CUSTOMER_WITHOUT_ORDERS = "Customer without orders";
 
     // Constructor privado para prevenir la instanciación
     private MessageConstants() {
