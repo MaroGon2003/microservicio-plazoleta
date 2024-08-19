@@ -17,4 +17,6 @@ public interface IOrderHandler {
 
     void deliveryOrder(Long id, int pin);
 
+    void cancelOrder(Long id);
+
 }

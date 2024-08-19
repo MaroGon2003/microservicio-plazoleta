@@ -107,6 +107,12 @@ public class OrderUseCase implements IOrderServicePort {
         if (order == null) {
             throw new OrderNotFoundException(MessageConstants.ORDER_NOT_FOUND);
         }
+
+        if (order.getStatus().equalsIgnoreCase(MessageConstants.CANCELED_STATUS) ||
+                order.getStatus().equalsIgnoreCase(MessageConstants.DELIVERED_STATUS)) {
+            throw new OrderAlreadyCanceledOrDeliveredException(MessageConstants.ORDER_ALREADY_CANCELED_OR_DELIVERED);
+        }
+
         Long employeeId = orderPersistencePort.getAuthenticatedUserId();
 
         if (!restauranEmployeePersistencePort.isEmployeeContracted(employeeId)) {
@@ -216,6 +222,31 @@ public class OrderUseCase implements IOrderServicePort {
         orderPersistencePort.updateOrder(order);
     }
 
+    @Override
+    public void cancelOrder(Long id) {
+
+            OrderModel order = orderPersistencePort.getOrderById(id);
+
+            if (order == null) {
+                throw new OrderNotFoundException(MessageConstants.ORDER_NOT_FOUND);
+            }
+
+            if (!order.getStatus().equalsIgnoreCase(MessageConstants.PENDING_STATUS)) {
+                throw new OrderCannotBeCanceledException(MessageConstants.ORDER_CANNOT_BE_CANCELED);
+            }
+
+            Long customerId = orderPersistencePort.getAuthenticatedUserId();
+
+            if (!Objects.equals(order.getCustomerId(), customerId)) {
+                throw new OrderNotBelongCustomerException(MessageConstants.ORDER_NOT_BELONG_CUSTOMER);
+            }
+
+            order.setStatus(MessageConstants.CANCELED_STATUS);
+            order.setEndTime(LocalDateTime.now());
+
+            orderPersistencePort.updateOrder(order);
+    }
+
     private void saveDishToOrder(Long orderId, Long customerId,Long restaurantId, List<DishToOrderModel> dishes) {
 
         OrderModel order = orderPersistencePort.getOrderById(orderId);
@@ -251,6 +282,7 @@ public class OrderUseCase implements IOrderServicePort {
         traceabilityModel.setOrderId(order.getId());
         traceabilityModel.setCustomerId(order.getCustomerId());
         traceabilityModel.setCustomerEmail(customer.getEmail());
+        traceabilityModel.setDate(LocalDateTime.now());
         traceabilityModel.setPreviousStatus(order.getStatus());
         traceabilityModel.setNewStatus(newStatus);
         traceabilityModel.setEmployeeId(order.getEmployeeId());

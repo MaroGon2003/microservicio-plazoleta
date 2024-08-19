@@ -68,5 +68,12 @@ public class OrderRestController {
         return ResponseEntity.ok("Order delivered successfully");
     }
 
+    @Secured({"CUSTOMER"})
+    @PatchMapping("/cancel-order/{id}")
+    public ResponseEntity<String> cancelOrder(@PathVariable Long id) {
+        orderHandler.cancelOrder(id);
+        return ResponseEntity.ok("Order canceled successfully");
+    }
+
 
 }

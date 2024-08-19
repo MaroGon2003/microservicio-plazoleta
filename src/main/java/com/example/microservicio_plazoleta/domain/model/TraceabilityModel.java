@@ -1,11 +1,14 @@
 package com.example.microservicio_plazoleta.domain.model;
 
+import java.time.LocalDateTime;
+
 public class TraceabilityModel {
 
     private String  id;
     private Long orderId;
     private Long customerId;
     private String customerEmail;
+    private LocalDateTime date;
     private String previousStatus;
     private String newStatus;
     private Long employeeId;
@@ -14,14 +17,15 @@ public class TraceabilityModel {
     public TraceabilityModel() {
     }
 
-    public TraceabilityModel(String customerEmail, Long customerId, String employeeEmail, Long employeeId, String  id, Long orderId, String previousStatus, String newStatus) {
+    public TraceabilityModel(String customerEmail, Long customerId, LocalDateTime date, String employeeEmail, Long employeeId, String id, String previousStatus, Long orderId, String newStatus) {
         this.customerEmail = customerEmail;
         this.customerId = customerId;
+        this.date = date;
         this.employeeEmail = employeeEmail;
         this.employeeId = employeeId;
         this.id = id;
-        this.orderId = orderId;
         this.previousStatus = previousStatus;
+        this.orderId = orderId;
         this.newStatus = newStatus;
     }
 
@@ -39,6 +43,22 @@ public class TraceabilityModel {
 
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getEmployeeEmail() {
@@ -71,14 +91,6 @@ public class TraceabilityModel {
 
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
-    }
-
-    public String  getId() {
-        return id;
-    }
-
-    public void setId(String  id) {
-        this.id = id;
     }
 
     public String getPreviousStatus() {

@@ -117,4 +117,14 @@ public class ExceptionManager {
         return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
     }
 
+    @ExceptionHandler(OrderCannotBeCanceledException.class)
+    public ResponseEntity<Map<String,String>> orderCannotBeCanceledException(OrderCannotBeCanceledException e) {
+        return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
+    }
+
+    @ExceptionHandler(OrderAlreadyCanceledOrDeliveredException.class)
+    public ResponseEntity<Map<String,String>> orderAlreadyCanceledOrDeliveredException(OrderAlreadyCanceledOrDeliveredException e) {
+        return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
+    }
+
 }
