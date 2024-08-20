@@ -51,4 +51,14 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
         orderRepository.save(orderEntityMapper.toOrderEntity(orderModel));
     }
 
+    @Override
+    public List<OrderModel> showOrderPeriod(Long ownerId) {
+        return orderEntityMapper.toModelList(orderRepository.findAllByRestaurantEntityIdOwnerAndEndTimeNotNull(ownerId));
+    }
+
+    @Override
+    public List<Object[]> showOrderRanking(Long restaurantId) {
+        return orderRepository.getAverageDurationPerEmployee(restaurantId);
+    }
+
 }

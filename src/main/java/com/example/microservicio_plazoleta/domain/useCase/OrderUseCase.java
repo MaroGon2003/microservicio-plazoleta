@@ -247,6 +247,33 @@ public class OrderUseCase implements IOrderServicePort {
             orderPersistencePort.updateOrder(order);
     }
 
+    @Override
+    public List<OrderModel> showOrderPeriod() {
+        Long ownerId = orderPersistencePort.getAuthenticatedUserId();
+
+        List<OrderModel> orderModelList = orderPersistencePort.showOrderPeriod(ownerId);
+        if (orderModelList.isEmpty()) {
+            throw new OrderNotFoundException(MessageConstants.ORDER_NOT_FOUND);
+        }
+
+        return orderModelList;
+    }
+
+    @Override
+    public List<Object[]> showOrderRanking() {
+
+        Long ownerId = orderPersistencePort.getAuthenticatedUserId();
+
+        RestaurantModel restaurant = restaurantPersistencePort.getRestaurantByOwnerId(ownerId);
+
+        if (restaurant == null) {
+            throw new RestaurantNotFoundException(MessageConstants.RESTAURANT_NOT_FOUND);
+        }
+
+        return orderPersistencePort.showOrderRanking(restaurant.getId());
+
+    }
+
     private void saveDishToOrder(Long orderId, Long customerId,Long restaurantId, List<DishToOrderModel> dishes) {
 
         OrderModel order = orderPersistencePort.getOrderById(orderId);
@@ -282,7 +309,7 @@ public class OrderUseCase implements IOrderServicePort {
         traceabilityModel.setOrderId(order.getId());
         traceabilityModel.setCustomerId(order.getCustomerId());
         traceabilityModel.setCustomerEmail(customer.getEmail());
-        traceabilityModel.setDate(LocalDateTime.now());
+        traceabilityModel.setDate(String.valueOf(LocalDateTime.now()));
         traceabilityModel.setPreviousStatus(order.getStatus());
         traceabilityModel.setNewStatus(newStatus);
         traceabilityModel.setEmployeeId(order.getEmployeeId());

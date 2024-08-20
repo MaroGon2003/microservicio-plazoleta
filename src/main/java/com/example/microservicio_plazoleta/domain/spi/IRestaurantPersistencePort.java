@@ -14,4 +14,6 @@ public interface IRestaurantPersistencePort {
 
     RestaurantModel getRestaurantById(Long id);
 
+    RestaurantModel getRestaurantByOwnerId(Long ownerId);
+
 }

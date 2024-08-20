@@ -1,7 +1,9 @@
 package com.example.microservicio_plazoleta.application.handler;
 
 import com.example.microservicio_plazoleta.application.dto.request.OrderRequestDto;
+import com.example.microservicio_plazoleta.application.dto.response.OrderRankingDto;
 import com.example.microservicio_plazoleta.application.dto.response.OrderResponseDto;
+import com.example.microservicio_plazoleta.application.dto.response.OrderTimeResponseDto;
 
 import java.util.List;
 
@@ -18,5 +20,9 @@ public interface IOrderHandler {
     void deliveryOrder(Long id, int pin);
 
     void cancelOrder(Long id);
+
+    List<OrderTimeResponseDto> showOrderPeriod();
+
+    List<OrderRankingDto> showOrderRanking();
 
 }

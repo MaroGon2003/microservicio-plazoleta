@@ -5,6 +5,7 @@ import com.example.microservicio_plazoleta.application.dto.request.DishUpdateAct
 import com.example.microservicio_plazoleta.application.dto.request.DishUpdateDto;
 import com.example.microservicio_plazoleta.application.dto.response.DishResponseDto;
 import com.example.microservicio_plazoleta.application.handler.IDishHandler;
+import com.example.microservicio_plazoleta.infrastructure.utils.Constans;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -34,9 +35,9 @@ public class DishRestController {
             @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(mediaType = "application/json"))
     })
     @PostMapping("/create-dish")
-    public ResponseEntity<Void> saveDish(@RequestBody @Valid DishRequestDto dishRequestDto) {
+    public ResponseEntity<String> saveDish(@RequestBody @Valid DishRequestDto dishRequestDto) {
         dishHandler.saveDish(dishRequestDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(Constans.DISH_CREATED);
     }
 
     @Secured({"OWNER"})
@@ -46,9 +47,9 @@ public class DishRestController {
             @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(mediaType = "application/json"))
     })
     @PatchMapping("/update/{id}")
-    public ResponseEntity<Void> updateDish(@PathVariable Long id, Long ownerId,@RequestBody @Valid DishUpdateDto dishUpdateDto) {
+    public ResponseEntity<String> updateDish(@PathVariable Long id, Long ownerId,@RequestBody @Valid DishUpdateDto dishUpdateDto) {
         dishHandler.updateDish(id, ownerId, dishUpdateDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(Constans.DISH_UPDATED);
     }
 
     @Secured({"OWNER"})
@@ -58,9 +59,9 @@ public class DishRestController {
             @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(mediaType = "application/json"))
     })
     @PatchMapping("/update/active/{id}")
-    public ResponseEntity<Void> updateActiveDish(@PathVariable Long id,Long ownerId, @RequestBody @Valid DishUpdateActiveRequestDto requestDto) {
+    public ResponseEntity<String> updateActiveDish(@PathVariable Long id,Long ownerId, @RequestBody @Valid DishUpdateActiveRequestDto requestDto) {
         dishHandler.updateActiveDish(id,ownerId,requestDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(Constans.DISH_UPDATED);
     }
 
     @Secured({"CUSTOMER"})

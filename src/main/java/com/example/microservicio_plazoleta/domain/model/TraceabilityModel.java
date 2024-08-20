@@ -1,14 +1,12 @@
 package com.example.microservicio_plazoleta.domain.model;
 
-import java.time.LocalDateTime;
-
 public class TraceabilityModel {
 
     private String  id;
     private Long orderId;
     private Long customerId;
     private String customerEmail;
-    private LocalDateTime date;
+    private String date;
     private String previousStatus;
     private String newStatus;
     private Long employeeId;
@@ -17,7 +15,7 @@ public class TraceabilityModel {
     public TraceabilityModel() {
     }
 
-    public TraceabilityModel(String customerEmail, Long customerId, LocalDateTime date, String employeeEmail, Long employeeId, String id, String previousStatus, Long orderId, String newStatus) {
+    public TraceabilityModel(String customerEmail, Long customerId, String date, String employeeEmail, Long employeeId, String id, String previousStatus, Long orderId, String newStatus) {
         this.customerEmail = customerEmail;
         this.customerId = customerId;
         this.date = date;
@@ -45,11 +43,11 @@ public class TraceabilityModel {
         this.customerId = customerId;
     }
 
-    public LocalDateTime getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

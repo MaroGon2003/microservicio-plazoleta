@@ -11,4 +11,6 @@ public interface IRestaurantRepository extends JpaRepository<RestaurantEntity, L
 
     Page<RestaurantEntity> findAllByOrderByName(Pageable pageable);
 
+    RestaurantEntity findByIdOwner(Long ownerId);
+
 }

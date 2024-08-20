@@ -5,6 +5,7 @@ import com.example.microservicio_plazoleta.application.dto.request.RestaurantReq
 import com.example.microservicio_plazoleta.application.dto.response.RestaurantResponseDto;
 import com.example.microservicio_plazoleta.application.handler.IRestaurantEmployeeHandler;
 import com.example.microservicio_plazoleta.application.handler.IRestaurantHandler;
+import com.example.microservicio_plazoleta.infrastructure.utils.Constans;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -36,9 +37,9 @@ public class RestaurantRestController {
             @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(mediaType = "application/json"))
     })
     @PostMapping("/create-restaurant")
-    public ResponseEntity<Void> createRestaurant(@RequestBody @Valid RestaurantRequestDto restaurantRequestDto) {
+    public ResponseEntity<String> createRestaurant(@RequestBody @Valid RestaurantRequestDto restaurantRequestDto) {
         restaurantHandler.saveRestaurant(restaurantRequestDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(Constans.RESTAURANT_CREATED);
     }
 
     @Secured({"CUSTOMER"})
@@ -51,7 +52,7 @@ public class RestaurantRestController {
     @PostMapping("/contract-employee")
     public ResponseEntity<String> contractEmployee(@RequestBody @Valid RestaurantEmployeeRequestDto restaurantEmployeeRequestDto) {
         restaurantEmployeeHandler.contractEmployee(restaurantEmployeeRequestDto);
-        return ResponseEntity.ok("Employee contracted successfully");
+        return ResponseEntity.ok(Constans.EMPLOYEE_CONTRACTED);
     }
 
 }

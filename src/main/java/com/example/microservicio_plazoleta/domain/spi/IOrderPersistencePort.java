@@ -18,4 +18,8 @@ public interface IOrderPersistencePort {
 
     void updateOrder(OrderModel orderModel);
 
+    List<OrderModel> showOrderPeriod(Long ownerId);
+
+    List<Object[]> showOrderRanking(Long restaurantId);
+
 }
